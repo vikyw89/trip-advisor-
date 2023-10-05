@@ -1,8 +1,6 @@
 # DaejeonGPT - Travel Planner
 
-LIVE PREVIEW: https://trip-advisor-tlq4.vercel.app/
-
-![travel-planner-header](./client/docs/wanderlust_header.png)
+![travel-planner-header](./docs/wanderlust_header.png)
 
 Travel Planner is a chatbot-based web application that can create itinerary based on the user's message. It is powered by PaLM, a large language model from Google. To use DaejeonGPT, simply type in a message that describes your interests or preferences, and it will generate an itinerary for you. You can also provide additional information to refine the itinerary.
 
@@ -20,7 +18,7 @@ The more conversational interface also lends itself better to serendipity, and t
 
 Potential Use Cases are clear for the Travel and Tourism industry but the same mechanics are transferable to retail and commerce for product recommendation, or discovery for Fashion or Media and Entertainment, or even configuration and personalization for Automotive.
 
-![travel-planner-demo](./client/docs/wanderlust_demo.png)
+![travel-planner-demo](./docs/wanderlust_demo.png)
 
 ## Table of contents
 
@@ -119,7 +117,7 @@ To use the Google Places API, you need to obtain an API key. Here are the steps 
 
 ### LLM's prompt design
 
-![llm-prompt-design-diagram](./client/docs/llm_prompt_design_diagram.png)
+![llm-prompt-design-diagram](./docs/llm_prompt_design_diagram.png)
 
 ### Prompt generator #1
 
