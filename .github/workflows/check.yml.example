@@ -1,0 +1,22 @@
+name: check
+on:
+  push
+jobs:
+  lint-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+            cd client
+            npm i
+            npm run check
+  # lint-server:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: |
+  #           cd server
+  #           npm i
+  #           npm run test
+  
+  
