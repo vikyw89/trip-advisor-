@@ -1,0 +1,8 @@
+FROM python:3.11 as BASE
+WORKDIR /app
+COPY . .
+RUN pipx install poetry==1.7.1
+RUN poetry install
+RUN poetry run prisma migrate dev
+EXPOSE 8000
+CMD poetry run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
