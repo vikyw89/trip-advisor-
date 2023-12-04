@@ -12,6 +12,7 @@ uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
 llama-index = "^0.9.11"
 trulens-eval = "^0.18.2"
 google-cloud-aiplatform = "^1.36.4"
+python-dotenv = "^1.0.0"
 
 
 [build-system]
