@@ -1,4 +1,6 @@
 from fastapi import APIRouter
 
 
-router = APIRouter()
+router = APIRouter(prefix="/itineraries")
+
+@router.get("")
