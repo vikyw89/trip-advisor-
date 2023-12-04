@@ -1,5 +1,5 @@
-from typing import Generator, List
-from fastapi import APIRouter, Form, File
+from typing import Generator, Iterable, List
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -25,7 +25,7 @@ class ReadUserResponse(BaseModel):
     """,
 )
 def read_user(user_id: int) -> ReadUserResponse:
-    return {"user_id": user_id, "name": "test"}
+    return ReadUserResponse(user_id=user_id, name="test")
 
 
 class Message(BaseModel):
@@ -67,9 +67,13 @@ def read_user_messages(user_id: int) -> ReadUserMessagesResponse:
 
 
 class CreateUserMessageInput(BaseModel):
-    id: str
     text: str
     file_url: str
+
+
+class CreateUserMessageResponse(BaseModel):
+    success: bool
+    code: int
 
 
 @router.post(
@@ -86,12 +90,10 @@ class CreateUserMessageInput(BaseModel):
     """,
 )
 def create_user_message(
-    user_id: int, input=CreateUserMessageInput
-) -> ReadUserMessagesResponse:
+    user_id: int, input: CreateUserMessageInput
+) -> CreateUserMessageResponse:
     # TODO: implement create user message
-    return ReadUserMessagesResponse(
-        messages=[Message(id=1, text="test", file_url="test")]
-    )
+    return CreateUserMessageResponse(success=True, code=200)
 
 
 @router.get(
@@ -107,14 +109,14 @@ def create_user_message(
     :rtype: Generator[Message, None, None]
     """,
 )
-def subscribe_user_messages(user_id: int) -> Generator[Message, None, None]:
+def subscribe_user_messages(user_id: int) -> Iterable[Message]:
     def gen():
         # TODO: implement subscribe user messages
-        messages = []
+        messages = [Message(id=1, text="test", file_url="test")]
         for message in messages:
             yield message
 
-    return StreamingResponse(gen(), media_type="text/event-stream")
+    return StreamingResponse(content=gen(), media_type="text/event-stream")
 
 
 class SaveUserItineraryInput(BaseModel):
@@ -141,7 +143,7 @@ class SaveUserItineraryResponse(BaseModel):
     """,
 )
 def save_user_itinerary(
-    user_id: int, input=SaveUserItineraryInput
+    user_id: int, input: SaveUserItineraryInput
 ) -> SaveUserItineraryResponse:
     # TODO: implement save user itinerary
     return SaveUserItineraryResponse(status=200, success=True, itinerary_id="test")
@@ -171,7 +173,7 @@ class SaveUserLocationResponse(BaseModel):
     """,
 )
 def save_user_location(
-    user_id: int, input=SaveUserLocationInput
+    user_id: int, input: SaveUserLocationInput
 ) -> SaveUserItineraryResponse:
     # TODO: implement save user location
 
