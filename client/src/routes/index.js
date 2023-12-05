@@ -15,23 +15,28 @@
  */
 
 import React from 'react';
-import { useRoutes } from 'react-router-dom';
+import { useRoutes, createMemoryRouter } from 'react-router-dom';
 import Index from 'src/pages';
 import Onboarding from 'src/pages/onboarding';
 
 export default function Router() {
   return useRoutes([
     {
-      path: 'chat',
+      path: 'itinerary',
       element: (
-          <Index />
+        <Index />
+      ),
+    },
+    {
+      path: 'companion',
+      element: (
+        <Index />
       ),
     },
     {
       path: '/',
       element: (
-          <Onboarding/>
-
+        <Onboarding />
       )
     }
   ]);
