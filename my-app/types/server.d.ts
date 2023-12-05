@@ -107,7 +107,7 @@ export interface components {
     /** CreateUserMessageInput */
     CreateUserMessageInput: {
       /** Text */
-      text: string;
+      text?: string;
       /** File Url */
       file_url?: string;
     };
@@ -129,8 +129,17 @@ export interface components {
       id: string;
       /** Text */
       text: string;
-      /** File Url */
-      file_url: string;
+      /** Is User */
+      is_user: boolean;
+    };
+    /** MessageEvent */
+    MessageEvent: {
+      /**
+       * Event
+       * @enum {string}
+       */
+      event: "create" | "update" | "delete";
+      message: components["schemas"]["Message"];
     };
     /** ReadUserMessagesResponse */
     ReadUserMessagesResponse: {
@@ -240,6 +249,12 @@ export interface operations {
    */
   read_user_messages_users__user_id__messages_get: {
     parameters: {
+      query?: {
+        order?: "asc" | "desc";
+        limit?: number;
+        after?: string;
+        before?: string;
+      };
       path: {
         user_id: string;
       };
@@ -317,7 +332,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["Message"][];
+          "application/json": components["schemas"]["MessageEvent"][];
         };
       };
       /** @description Validation Error */

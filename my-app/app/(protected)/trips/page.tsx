@@ -1,33 +1,49 @@
 'use client';
 
-import { useSendMessageMutation } from "@/store/messageApi";
-import { FormEvent } from "react";
+import { Message } from '@/components/Message';
+import {
+	useReadMessagesQuery,
+	useSendMessageMutation,
+} from '@/store/messageApi';
+import { FormEvent } from 'react';
 
 export default function Page() {
-    const [sendMessage, sendMessageRes] = useSendMessageMutation();
+	const [sendMessage, sendMessageRes] = useSendMessageMutation();
+	const { data: messages, isLoading: isLoadingMessages } = useReadMessagesQuery(
+		{ order: 'desc', limit: 20 }
+	);
 
-	const sendMessageHandler = async (e:FormEvent<HTMLFormElement>) => {
+	const sendMessageHandler = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
 		const message = formData.get('message');
 		if (!message) return;
 		e.currentTarget.reset();
 
-        // send message
-        await sendMessage({
-          text: message as string,
-          file: undefined
-        })
-
-        
+		// send message
+		await sendMessage({
+			text: message as string,
+			file: undefined,
+		});
 	};
 
 	return (
 		<main className='w-full h-full flex justify-center'>
 			<div className='max-w-screen-sm text-base-content/70 flex flex-col justify-end relative w-full'>
-				<div className='top-0 absolute  w-full text-center p-2'>
-					It’s a big world, tell me where do you want to explore?
-				</div>
+				{((messages && messages.length == 0) || isLoadingMessages) && (
+					<div className='top-0 absolute  w-full text-center p-2'>
+						It’s a big world, tell me where do you want to explore?
+					</div>
+				)}
+				{messages && (
+					messages.map((v)=>{
+						return <Message key={v.id} props={{
+							content: v.text,
+							isLoading: v.isLoading,
+							sender: v.isUser ? "user" : "bot",
+						}}/>
+					})
+				)}
 				<div className='p-2'>
 					<form
 						className='w-full flex shadow-md rounded-full border-2 bg-base-300'

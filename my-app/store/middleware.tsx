@@ -27,6 +27,7 @@ export const rtkQueryErrorLogger: Middleware =
     if (isFulfilled(action)) {
       switch (endpointName) {
         default: {
+          console.log("🚀 ~ file: middleware.tsx:28 ~ action:", action)
           // toast.success("",{icon:"🐧"})
         }
       }
@@ -34,6 +35,7 @@ export const rtkQueryErrorLogger: Middleware =
     if (isPending(action)) {
       switch (endpointName) {
         default: {
+          console.log("🚀 ~ file: middleware.tsx:36 ~ action:", action)
           toast.loading("Loading", { id: "loading" });
         }
       }
