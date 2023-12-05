@@ -40,7 +40,7 @@ const OnBoarding = () => {
         }}
       >
         <Stack position="absolute" bottom="40%" alignItems="center" sx={{ zIndex: 1000 }} justifyContent="center" width="100%" direction="row" spacing={1}>
-          <Link href="/chat" sx={{ textDecoration: 'none' }}>
+          <Link href="/itinerary" sx={{ textDecoration: 'none' }}>
             <Fab
 
               sx={{
@@ -52,7 +52,22 @@ const OnBoarding = () => {
               }}
               variant="extended"
             >
-              Let’s go!
+              Create Itinerary
+            </Fab>
+          </Link>
+          <Link href="/companion" sx={{ textDecoration: 'none' }}>
+            <Fab
+
+              sx={{
+                fontFamily: "Google Sans",
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                color: '#9E4F36',
+                boxShadow: '0px 2px 3px rgba(255, 255, 255, 0.25)',
+                textTransform: 'none'
+              }}
+              variant="extended"
+            >
+              Travel Companion
             </Fab>
           </Link>
         </Stack>

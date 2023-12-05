@@ -16,5 +16,5 @@ datasource db {
 model User {
   id        String   @id
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
