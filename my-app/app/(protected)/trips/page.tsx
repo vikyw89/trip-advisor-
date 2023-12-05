@@ -1,12 +1,25 @@
 'use client';
 
+import { useSendMessageMutation } from "@/store/messageApi";
+import { FormEvent } from "react";
+
 export default function Page() {
-	const sendMessageHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    const [sendMessage, sendMessageRes] = useSendMessageMutation();
+
+	const sendMessageHandler = async (e:FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
 		const message = formData.get('message');
-		e.currentTarget.reset();
 		if (!message) return;
+		e.currentTarget.reset();
+
+        // send message
+        await sendMessage({
+          text: message as string,
+          file: undefined
+        })
+
+        
 	};
 
 	return (
