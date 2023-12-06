@@ -2,6 +2,7 @@
 
 import { useInView } from 'framer-motion';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
 export const ExploreCardPropsSchema = z.object({
@@ -15,11 +16,18 @@ export type ExploreCardProps = z.infer<typeof ExploreCardPropsSchema>;
 export const ExploreCard = ({ props }: { props: ExploreCardProps }) => {
 	const ref = useRef(null);
 	const isInView = useInView(ref, { amount: 1 });
+	const router = useRouter();
+
+	const exploreCardClickHandler = () => {
+        throw new Error("Coming soon!")
+        router.push(`/explore/${props.id}`);
+    };
 
 	return (
 		<div
-			className='rounded-box shadow-inner max-w-xl h-[200px] relative overflow-hidden sm:w-[300px]'
+			className='cursor-pointer rounded-box shadow-inner max-w-xl h-[200px] relative overflow-hidden'
 			ref={ref}
+			onClick={exploreCardClickHandler}
 		>
 			<Image
 				src={props.imageUrl}

@@ -5,6 +5,7 @@ import { useReadSessionQuery } from '@/store/authApi';
 import { useInView } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
+import Image from 'next/image';
 
 export const InitialState = {
 	trips: [
@@ -150,22 +151,42 @@ export default function Page() {
 	return (
 		<main className='w-full h-full flex justify-center'>
 			<div className='max-w-screen-sm relative w-full h-full scrollbar-none overflow-y-scroll'>
-				<div className='font-extrabold text-base-content text-2xl p-5 relative'>
-					<div className='flex justify-center w-full z-10'>
-						<div className='avatar z-10'>
-							<div className='w-24 rounded-full'>
-								<img src={avatarUrl ?? ''} />
+				<div className='w-full relative aspect-auto h-1/4'>
+					<Image
+						src='https://images.unsplash.com/photo-1522426266214-ec2d2abb9ce0?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+						alt='https://images.unsplash.com/photo-1522426266214-ec2d2abb9ce0?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+						fill
+						// style={{ objectFit: 'contain',  }}
+						className='w-full h-full'
+					/>
+					<div className='font-extrabold text-base-content text-2xl p-5 absolute bottom-0 left-0 right-0'>
+						<div className='flex justify-center w-full z-10'>
+							<div className='avatar z-10 '>
+								<div className='w-24 rounded-full shadow-lg'>
+									<img src={avatarUrl ?? ''} />
+								</div>
 							</div>
 						</div>
+						<div className='absolute bottom-0 left-0 right-0 w-full h-16 bg-base-200 z-0 rounded-t-box'></div>
 					</div>
-					<div className='absolute bottom-0 left-0 right-0 w-full h-16 bg-primary z-0 rounded-t-box'></div>
 				</div>
 				<div
-					className={`animate-once animate-ease-in-out duration-300 font-extrabold text-primary-content text-2xl px-2 bg-primary`}
+					className={`animate-once animate-ease-in-out duration-300 font-extrabold text-base-content text-2xl px-2 bg-base-200 cursor-default`}
 				>
 					Upcoming Trips
 				</div>
-				<div className='flex overflow-x-scroll h-fit flex-nowrap py-2 bg-primary text-primary-content scrollbar-none'>
+				<div className='flex overflow-x-scroll h-fit flex-nowrap py-2 bg-base-200 text-base-content scrollbar-none'>
+					<TripCard
+						props={{
+							id: 'new',
+							destination: 'plan a new trip !',
+							startDate: '',
+							endDate: '',
+							pictureUrl: 'new',
+							isNewTrip: true,
+						}}
+						key={'new'}
+					/>
 					{InitialState.trips.map((trip) => {
 						return (
 							<TripCard
@@ -180,10 +201,10 @@ export default function Page() {
 						);
 					})}
 				</div>
-				<div className='animate-once animate-ease-in-out font-extrabold text-primary-content text-2xl px-2 bg-primary'>
+				<div className='animate-once animate-ease-in-out font-extrabold text-base-content text-2xl px-2 bg-base-200 cursor-default'>
 					Past Trips
 				</div>
-				<div className='flex overflow-x-scroll flex-nowrap py-2 bg-primary text-primary-content scrollbar-none'>
+				<div className='flex overflow-x-scroll flex-nowrap py-2 bg-base-200 text-base-content scrollbar-none'>
 					{InitialState.trips.map((trip) => {
 						return (
 							<TripCard
@@ -199,14 +220,14 @@ export default function Page() {
 						);
 					})}
 				</div>
-				<div className='animate-once animate-ease-in-out font-extrabold text-primary-content text-2xl px-2 bg-primary'>
+				<div className='animate-once animate-ease-in-out font-extrabold text-base-content text-2xl px-2 bg-base-200 cursor-default'>
 					Explore
 				</div>
 				<div
-					className='w-full bg-primary text-primary-content gap-2 p-2'
+					className='w-full bg-base-200 text-base-content gap-2 p-2'
 					style={{
 						display: 'grid',
-						gridTemplateColumns: 'repeat(auto-fit, minmax(min-content, 1fr))',
+						gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
 					}}
 				>
 					{InitialState.explore.map((explore) => {
