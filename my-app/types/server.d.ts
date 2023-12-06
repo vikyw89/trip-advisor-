@@ -18,7 +18,7 @@ export interface paths {
      */
     get: operations["read_user_users__user_id__get"];
   };
-  "/users/{user_id}/messages": {
+  "/users/{user_id}/trips/{trip_id}/messages": {
     /**
      * Read User Messages
      * @description Read user messages.
@@ -38,7 +38,7 @@ export interface paths {
      *         input and returns an instance of the ReadUserMessagesResponse class
      *         containing the user messages.
      */
-    get: operations["read_user_messages_users__user_id__messages_get"];
+    get: operations["read_user_messages_users__user_id__trips__trip_id__messages_get"];
     /**
      * Create User Message
      * @description Create a new message for a user.
@@ -50,9 +50,9 @@ export interface paths {
      *     Returns:
      *         ReadUserMessagesResponse: The response containing the user's updated messages.
      */
-    post: operations["create_user_message_users__user_id__messages_post"];
+    post: operations["create_user_message_users__user_id__trips__trip_id__messages_post"];
   };
-  "/users/{user_id}/messages/subscribe": {
+  "/users/{user_id}/trips/{trip_id}/messages/subscribe": {
     /**
      * Subscribe User Messages
      * @description Subscribe to user messages.
@@ -64,7 +64,7 @@ export interface paths {
      *     :return: A generator that yields Message objects.
      *     :rtype: Generator[Message, None, None]
      */
-    get: operations["subscribe_user_messages_users__user_id__messages_subscribe_get"];
+    get: operations["subscribe_user_messages_users__user_id__trips__trip_id__messages_subscribe_get"];
   };
   "/users/{user_id}/itineraries": {
     /**
@@ -131,15 +131,6 @@ export interface components {
       text: string;
       /** Is User */
       is_user: boolean;
-    };
-    /** MessageEvent */
-    MessageEvent: {
-      /**
-       * Event
-       * @enum {string}
-       */
-      event: "create" | "update" | "delete";
-      message: components["schemas"]["Message"];
     };
     /** ReadUserMessagesResponse */
     ReadUserMessagesResponse: {
@@ -247,7 +238,7 @@ export interface operations {
    *         input and returns an instance of the ReadUserMessagesResponse class
    *         containing the user messages.
    */
-  read_user_messages_users__user_id__messages_get: {
+  read_user_messages_users__user_id__trips__trip_id__messages_get: {
     parameters: {
       query?: {
         order?: "asc" | "desc";
@@ -257,6 +248,7 @@ export interface operations {
       };
       path: {
         user_id: string;
+        trip_id: string;
       };
     };
     responses: {
@@ -285,10 +277,11 @@ export interface operations {
    *     Returns:
    *         ReadUserMessagesResponse: The response containing the user's updated messages.
    */
-  create_user_message_users__user_id__messages_post: {
+  create_user_message_users__user_id__trips__trip_id__messages_post: {
     parameters: {
       path: {
         user_id: string;
+        trip_id: string;
       };
     };
     requestBody: {
@@ -322,17 +315,18 @@ export interface operations {
    *     :return: A generator that yields Message objects.
    *     :rtype: Generator[Message, None, None]
    */
-  subscribe_user_messages_users__user_id__messages_subscribe_get: {
+  subscribe_user_messages_users__user_id__trips__trip_id__messages_subscribe_get: {
     parameters: {
       path: {
         user_id: string;
+        trip_id: string;
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["MessageEvent"][];
+          "application/json": string[];
         };
       };
       /** @description Validation Error */

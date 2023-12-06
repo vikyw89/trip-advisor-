@@ -4,15 +4,17 @@ import { SERVER_BASE_URL, serverApi } from '@/libs/server';
 import { jsonStreamIterator } from '@/libs/streamAsyncIterator';
 import { z } from 'zod';
 
-
-let isStreamingMessage = false
+let isStreamingMessage = false;
 
 const messageApi = emptySplitApi.injectEndpoints({
 	// @ts-ignore
 	overrideExisting: module.hot?.status() === 'apply',
 	endpoints: (builder) => ({
-		sendMessage: builder.mutation<any, { text: string; file?: File }>({
-			queryFn: async ({ text, file }) => {
+		sendMessage: builder.mutation<
+			any,
+			{ text: string; file?: File; tripId: string }
+		>({
+			queryFn: async ({ text, file, tripId }) => {
 				try {
 					const session = await supabase.auth.getSession();
 
@@ -26,27 +28,31 @@ const messageApi = emptySplitApi.injectEndpoints({
 						const fileUploadRes = await supabase.storage
 							.from('files')
 							.upload(
-								`${session.data.session?.user?.id}/${Date.now().toString()}`,
+								`${session.data.session?.user?.id}/${tripId}/${Date.now().toString()}`,
 								file
 							);
 						fileUrl = supabase.storage
 							.from('files')
 							.getPublicUrl(
-								`${session.data.session?.user?.id}/${Date.now().toString()}`
+								`${session.data.session?.user?.id}/${tripId}/${Date.now().toString()}`
 							).data.publicUrl;
 					}
 
-					const res = await serverApi.POST('/users/{user_id}/messages', {
-						params: {
-							path: {
-								user_id: session.data.session?.user?.id,
+					const res = await serverApi.POST(
+						'/users/{user_id}/trips/{trip_id}/messages',
+						{
+							params: {
+								path: {
+									user_id: session.data.session?.user?.id,
+									trip_id: tripId,
+								},
 							},
-						},
-						body: {
-							text: text,
-							file_url: fileUrl,
-						},
-					});
+							body: {
+								text: text,
+								file_url: fileUrl,
+							},
+						}
+					);
 
 					if (res.error) {
 						throw new Error(
@@ -62,15 +68,21 @@ const messageApi = emptySplitApi.injectEndpoints({
 			},
 		}),
 		readMessages: builder.query<
-			Array<{ id: string; text: string; isUser: boolean; isLoading: boolean }>,
+			Array<{
+				id: string;
+				text: string;
+				isUser: boolean;
+				isLoading: boolean;
+			}>,
 			{
 				limit?: number;
 				after?: string;
 				before?: string;
 				order?: 'asc' | 'desc';
+				tripId: string;
 			}
 		>({
-			queryFn: async ({ limit, after, before, order }) => {
+			queryFn: async ({ limit, after, before, order, tripId }) => {
 				try {
 					const session = await supabase.auth.getSession();
 
@@ -78,19 +90,23 @@ const messageApi = emptySplitApi.injectEndpoints({
 						throw new Error('Session expired');
 					}
 
-					const res = await serverApi.GET('/users/{user_id}/messages', {
-						params: {
-							path: {
-								user_id: session.data.session?.user?.id,
+					const res = await serverApi.GET(
+						'/users/{user_id}/trips/{trip_id}/messages',
+						{
+							params: {
+								path: {
+									user_id: session.data.session?.user?.id,
+									trip_id: tripId,
+								},
+								query: {
+									limit: limit,
+									after: after,
+									before: before,
+									order: order,
+								},
 							},
-							query: {
-								limit: limit,
-								after: after,
-								before: before,
-								order: order,
-							},
-						},
-					});
+						}
+					);
 					const data = res.data?.messages.map((v) => {
 						return {
 							id: v.id,
@@ -109,10 +125,10 @@ const messageApi = emptySplitApi.injectEndpoints({
 				{ cacheDataLoaded, cacheEntryRemoved, updateCachedData }
 			) => {
 				try {
-                    if (isStreamingMessage) return
-                    
+					if (isStreamingMessage) return;
+
 					await cacheDataLoaded;
-                    isStreamingMessage = true
+					isStreamingMessage = true;
 					const session = await supabase.auth.getSession();
 
 					if (!session.data.session?.user?.id) {
@@ -120,23 +136,27 @@ const messageApi = emptySplitApi.injectEndpoints({
 					}
 
 					const res = await serverApi.GET(
-						'/users/{user_id}/messages/subscribe',
+						'/users/{user_id}/trips/{trip_id}/messages/subscribe',
 						{
 							params: {
 								path: {
 									user_id: session.data.session?.user?.id,
+									trip_id: args.tripId,
 								},
 							},
-                            parseAs:'stream'
-						},
+							parseAs: 'stream',
+						}
 					);
-                    // const res = await fetch(`${SERVER_BASE_URL}/users/${session.data.session?.user?.id}/messages/subscribe`)
+					// const res = await fetch(`${SERVER_BASE_URL}/users/${session.data.session?.user?.id}/messages/subscribe`)
 					const stream = res.response.body;
 
 					if (!stream) {
 						throw new Error('Stream not found');
 					}
-                    console.log("🚀 ~ file: messageApi.ts:113 ~ isStreamingMessage:", isStreamingMessage)
+					console.log(
+						'🚀 ~ file: messageApi.ts:113 ~ isStreamingMessage:',
+						isStreamingMessage
+					);
 
 					const MessageEventSchema = z.object({
 						event: z
@@ -153,7 +173,10 @@ const messageApi = emptySplitApi.injectEndpoints({
 
 					for await (const message of jsonStreamIterator(stream)) {
 						const parsedMessage: MessageEvent = JSON.parse(message);
-						console.log("🚀 ~ file: messageApi.ts:154 ~ forawait ~ parsedMessage:", parsedMessage)
+						console.log(
+							'🚀 ~ file: messageApi.ts:154 ~ forawait ~ parsedMessage:',
+							parsedMessage
+						);
 
 						const event = parsedMessage.event;
 						const messageContent = parsedMessage.message;
@@ -171,32 +194,32 @@ const messageApi = emptySplitApi.injectEndpoints({
 								break;
 							}
 							case 'update': {
-                                updateCachedData((draft) => {
-                                    for (let i = 0; i < draft.length; i++) {
-                                        if (draft[i].id === messageContent.id) {
-                                            draft[i] = {
-                                                id: messageContent.id,
-                                                text: messageContent.text,
-                                                isLoading: false,
-                                                isUser: messageContent.is_user,
-                                            };
-                                            break;
-                                        }
-                                    }
+								updateCachedData((draft) => {
+									for (let i = 0; i < draft.length; i++) {
+										if (draft[i].id === messageContent.id) {
+											draft[i] = {
+												id: messageContent.id,
+												text: messageContent.text,
+												isLoading: false,
+												isUser: messageContent.is_user,
+											};
+											break;
+										}
+									}
 								});
 								break;
 							}
 							case 'delete': {
-                                updateCachedData((draft) => {
-                                    draft.filter((v) => v.id !== messageContent.id)
-                                })
+								updateCachedData((draft) => {
+									draft.filter((v) => v.id !== messageContent.id);
+								});
 								break;
 							}
 						}
 					}
 				} finally {
 					await cacheEntryRemoved;
-                    isStreamingMessage = false
+					isStreamingMessage = false;
 				}
 			},
 		}),
