@@ -4,8 +4,7 @@ import { SERVER_BASE_URL, serverApi } from '@/libs/server';
 import { jsonStreamIterator } from '@/libs/streamAsyncIterator';
 import { z } from 'zod';
 
-
-let isStreamingMessage = false
+let isStreamingMessage = false;
 
 const messageApi = emptySplitApi.injectEndpoints({
 	// @ts-ignore
@@ -62,12 +61,19 @@ const messageApi = emptySplitApi.injectEndpoints({
 			},
 		}),
 		readMessages: builder.query<
-			Array<{ id: string; text: string; isUser: boolean; isLoading: boolean }>,
+			Array<{
+				id: string;
+				text: string;
+				isUser: boolean;
+				isLoading: boolean;
+				tripId: string;
+			}>,
 			{
 				limit?: number;
 				after?: string;
 				before?: string;
 				order?: 'asc' | 'desc';
+				tripId?: string;
 			}
 		>({
 			queryFn: async ({ limit, after, before, order }) => {
@@ -109,10 +115,10 @@ const messageApi = emptySplitApi.injectEndpoints({
 				{ cacheDataLoaded, cacheEntryRemoved, updateCachedData }
 			) => {
 				try {
-                    if (isStreamingMessage) return
-                    
+					if (isStreamingMessage) return;
+
 					await cacheDataLoaded;
-                    isStreamingMessage = true
+					isStreamingMessage = true;
 					const session = await supabase.auth.getSession();
 
 					if (!session.data.session?.user?.id) {
@@ -127,16 +133,19 @@ const messageApi = emptySplitApi.injectEndpoints({
 									user_id: session.data.session?.user?.id,
 								},
 							},
-                            parseAs:'stream'
-						},
+							parseAs: 'stream',
+						}
 					);
-                    // const res = await fetch(`${SERVER_BASE_URL}/users/${session.data.session?.user?.id}/messages/subscribe`)
+					// const res = await fetch(`${SERVER_BASE_URL}/users/${session.data.session?.user?.id}/messages/subscribe`)
 					const stream = res.response.body;
 
 					if (!stream) {
 						throw new Error('Stream not found');
 					}
-                    console.log("🚀 ~ file: messageApi.ts:113 ~ isStreamingMessage:", isStreamingMessage)
+					console.log(
+						'🚀 ~ file: messageApi.ts:113 ~ isStreamingMessage:',
+						isStreamingMessage
+					);
 
 					const MessageEventSchema = z.object({
 						event: z
@@ -153,7 +162,10 @@ const messageApi = emptySplitApi.injectEndpoints({
 
 					for await (const message of jsonStreamIterator(stream)) {
 						const parsedMessage: MessageEvent = JSON.parse(message);
-						console.log("🚀 ~ file: messageApi.ts:154 ~ forawait ~ parsedMessage:", parsedMessage)
+						console.log(
+							'🚀 ~ file: messageApi.ts:154 ~ forawait ~ parsedMessage:',
+							parsedMessage
+						);
 
 						const event = parsedMessage.event;
 						const messageContent = parsedMessage.message;
@@ -171,32 +183,32 @@ const messageApi = emptySplitApi.injectEndpoints({
 								break;
 							}
 							case 'update': {
-                                updateCachedData((draft) => {
-                                    for (let i = 0; i < draft.length; i++) {
-                                        if (draft[i].id === messageContent.id) {
-                                            draft[i] = {
-                                                id: messageContent.id,
-                                                text: messageContent.text,
-                                                isLoading: false,
-                                                isUser: messageContent.is_user,
-                                            };
-                                            break;
-                                        }
-                                    }
+								updateCachedData((draft) => {
+									for (let i = 0; i < draft.length; i++) {
+										if (draft[i].id === messageContent.id) {
+											draft[i] = {
+												id: messageContent.id,
+												text: messageContent.text,
+												isLoading: false,
+												isUser: messageContent.is_user,
+											};
+											break;
+										}
+									}
 								});
 								break;
 							}
 							case 'delete': {
-                                updateCachedData((draft) => {
-                                    draft.filter((v) => v.id !== messageContent.id)
-                                })
+								updateCachedData((draft) => {
+									draft.filter((v) => v.id !== messageContent.id);
+								});
 								break;
 							}
 						}
 					}
 				} finally {
 					await cacheEntryRemoved;
-                    isStreamingMessage = false
+					isStreamingMessage = false;
 				}
 			},
 		}),

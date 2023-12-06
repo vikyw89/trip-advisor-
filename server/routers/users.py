@@ -41,7 +41,7 @@ class ReadUserMessagesResponse(BaseModel):
 
 
 @router.get(
-    path="/{user_id}/messages",
+    path="/{user_id}/trips/{trip_id}/messages",
     description="""
     Read user messages.
 
@@ -67,6 +67,7 @@ def read_user_messages(
     limit: Optional[int] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
+    trip_id: Optional[str] = None,
 ) -> ReadUserMessagesResponse:
     # TODO: implement read user messages
     return ReadUserMessagesResponse(
@@ -85,7 +86,7 @@ class CreateUserMessageResponse(BaseModel):
 
 
 @router.post(
-    path="/{user_id}/messages",
+    path="/{user_id}/trips/{trip_id}/messages",
     description="""
     Create a new message for a user.
 
@@ -98,7 +99,7 @@ class CreateUserMessageResponse(BaseModel):
     """,
 )
 def create_user_message(
-    user_id: str, input: CreateUserMessageInput
+    user_id: str, trip_id: str, input: CreateUserMessageInput
 ) -> CreateUserMessageResponse:
     # TODO: implement create user message
     return CreateUserMessageResponse(success=True, code=200)
@@ -108,7 +109,7 @@ class MessageEvent(BaseModel):
     message:Message
     
 @router.get(
-    path="/{user_id}/messages/subscribe",
+    path="/{user_id}/trips/{trip_id}/messages/subscribe",
     description="""
     Subscribe to user messages.
 
@@ -120,7 +121,7 @@ class MessageEvent(BaseModel):
     :rtype: Generator[Message, None, None]
     """,
 )
-def subscribe_user_messages(user_id: str) -> Iterable[str]:
+def subscribe_user_messages(user_id: str, trip_id:str) -> Iterable[str]:
     def gen():
         # TODO: implement subscribe user messages
         messages_events = [MessageEvent(event="create",message=Message(id="dsadaaaa", text="testss",is_user=True)).json(),MessageEvent(event="create",message=Message(id="22222", text="testdddss",is_user=True)).json()]
