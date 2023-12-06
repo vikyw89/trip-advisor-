@@ -145,9 +145,6 @@ export default function Page() {
 	const ref = useRef(null);
 	const isInView = useInView(ref, { amount: 1 });
 
-	const planTripHandler = () => {
-		router.push('/trips');
-	};
 	return (
 		<main className='w-full h-full flex justify-center'>
 			<div className='max-w-screen-sm relative w-full h-full scrollbar-none overflow-y-scroll'>
@@ -161,7 +158,7 @@ export default function Page() {
 					/>
 					<div className='font-extrabold text-base-content text-2xl p-5 absolute bottom-0 left-0 right-0'>
 						<div className='flex justify-center w-full z-10'>
-							<div className='avatar z-10 '>
+							<div className='avatar z-10 animate-jump animate-twice animate-ease-in-out'>
 								<div className='w-24 rounded-full shadow-lg'>
 									<img src={avatarUrl ?? ''} />
 								</div>

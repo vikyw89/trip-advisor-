@@ -9,11 +9,12 @@ import { useParams } from 'next/navigation';
 import { FormEvent } from 'react';
 
 export default function Page() {
-	const params = useParams()
-	const isNewTrip = params?.["trip-id"] === 'new';
+	const params = useParams();
+	const tripId = params?.['trip-id'] as string;
+	const isNewTrip = tripId === 'new';
 	const [sendMessage, sendMessageRes] = useSendMessageMutation();
 	const { data: messages, isLoading: isLoadingMessages } = useReadMessagesQuery(
-		{ order: 'desc', limit: 20, tripId: params?.["trip-id"] },
+		{ order: 'desc', limit: 20, tripId: tripId }
 	);
 
 	const sendMessageHandler = async (e: FormEvent<HTMLFormElement>) => {
@@ -27,6 +28,7 @@ export default function Page() {
 		await sendMessage({
 			text: message as string,
 			file: undefined,
+			tripId: tripId,
 		});
 	};
 
@@ -34,19 +36,23 @@ export default function Page() {
 		<main className='w-full h-full flex justify-center'>
 			<div className='max-w-screen-sm text-base-content/70 flex flex-col justify-end relative w-full'>
 				{isNewTrip && (
-					<div className='top-0 absolute  w-full text-center p-2'>
+					<div className='top-0 absolute  w-full text-center p-2 animate-jump animate-twice animate-ease-in-out'>
 						It’s a big world, tell me where do you want to explore?
 					</div>
 				)}
-				{messages && (
-					messages.map((v)=>{
-						return <Message key={v.id} props={{
-							content: v.text,
-							isLoading: v.isLoading,
-							sender: v.isUser ? "user" : "bot",
-						}}/>
-					})
-				)}
+				{messages &&
+					messages.map((v) => {
+						return (
+							<Message
+								key={v.id}
+								props={{
+									content: v.text,
+									isLoading: v.isLoading,
+									sender: v.isUser ? 'user' : 'bot',
+								}}
+							/>
+						);
+					})}
 				<div className='p-2'>
 					<form
 						className='w-full flex shadow-md rounded-full border-2 bg-base-300'

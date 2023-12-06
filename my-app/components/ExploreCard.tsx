@@ -4,6 +4,7 @@ import { useInView } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { z } from 'zod';
 export const ExploreCardPropsSchema = z.object({
 	id: z.string(),
@@ -19,7 +20,8 @@ export const ExploreCard = ({ props }: { props: ExploreCardProps }) => {
 	const router = useRouter();
 
 	const exploreCardClickHandler = () => {
-        throw new Error("Coming soon!")
+        toast.error("Coming soon!")
+        // throw new Error("Coming soon!")
         router.push(`/explore/${props.id}`);
     };
 
