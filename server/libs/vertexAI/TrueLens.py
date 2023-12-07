@@ -23,8 +23,8 @@ load_dotenv()
 dotenv_result = load_dotenv()
 
 print("Dotenv Result:", dotenv_result)
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL2")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY2")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Construct the absolute path to the JSON file
