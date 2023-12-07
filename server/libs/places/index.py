@@ -87,5 +87,4 @@ class Location:
                 return f'{match.group("name_key")}{save_image_response.imageUrl}'
             
         parsed_response = re.sub(pattern=pattern, repl=repl,string=stringified_response)
-        print(parsed_response)
         return json.loads(parsed_response)

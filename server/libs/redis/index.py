@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Generator
 from pydantic import Json
@@ -30,8 +31,10 @@ class Cache:
     def __init__(self) -> None:
         pass
     
-    def set(self, key: str, value: Json) -> None:
+    def set(self, key: str, value: str) -> str:
         r.set(key, value)
+        return value
         
-    def get(self, key: str) -> Json:
-        return r.get(key)
+    def get(self, key: str) -> str:
+        res = r.get(key)
+        return res
