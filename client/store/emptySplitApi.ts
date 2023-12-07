@@ -5,6 +5,6 @@ import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react'
 export const emptySplitApi = createApi({
   baseQuery: fakeBaseQuery(),
   endpoints: () => ({}),
-  tagTypes:["auth","message"]
+  tagTypes:["auth","message","trip"]
 })
 

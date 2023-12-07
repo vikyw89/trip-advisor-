@@ -38,6 +38,7 @@ const tripApi = emptySplitApi.injectEndpoints({
 					return { error };
 				}
 			},
+			invalidatesTags: ['trip'],
 		}),
 		readTrips: builder.query<ReadTripsResponse, { isUpcoming?: boolean }>({
 			queryFn: async ({ isUpcoming }) => {
@@ -70,6 +71,7 @@ const tripApi = emptySplitApi.injectEndpoints({
 					return { error };
 				}
 			},
+			providesTags: ['trip'],
 		}),
 	}),
 });
