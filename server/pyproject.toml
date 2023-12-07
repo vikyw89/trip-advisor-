@@ -18,6 +18,7 @@ pytest = "^7.4.3"
 httpx = "^0.25.2"
 langchain = "^0.0.346"
 redis = "^5.0.1"
+langchaincoexpert = "^1.0.3"
 
 
 [build-system]
