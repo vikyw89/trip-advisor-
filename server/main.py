@@ -13,7 +13,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost",
     "http://localhost:8080",
-    "https://trip-advisor-tlq4.vercel.app/"
+    "https://trip-advisor-tlq4.vercel.app"
 ]
 
 app.add_middleware(
@@ -23,6 +23,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # routers
 app.include_router(router=itineraries.router)
 app.include_router(router=locations.router)
