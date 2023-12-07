@@ -58,6 +58,11 @@ export interface paths {
   };
   "/users/{user_id}/trips": {
     /**
+     * Read User Trips
+     * @description Read trips that belong to a user
+     */
+    get: operations["read_user_trips_users__user_id__trips_get"];
+    /**
      * Create User Trip
      * @description Create a new trip for a user
      */
@@ -122,14 +127,29 @@ export interface components {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
     };
-    /** Message */
-    Message: {
+    /**
+     * Place
+     * @description Represents a Place record
+     */
+    Place: {
       /** Id */
       id: string;
-      /** Text */
-      text: string;
-      /** Is User */
-      is_user: boolean;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      reviews?: components["schemas"]["Review"];
+      Trip?: components["schemas"]["Trip"];
+      /** Tripid */
+      tripId?: string;
+      /** Reviewid */
+      reviewId: string;
     };
     /** ReadTripItinerariesResponse */
     ReadTripItinerariesResponse: {
@@ -141,7 +161,7 @@ export interface components {
     /** ReadUserMessagesResponse */
     ReadUserMessagesResponse: {
       /** Messages */
-      messages: components["schemas"]["Message"][];
+      messages: components["schemas"]["typings__index__Message"][];
     };
     /** ReadUserResponse */
     ReadUserResponse: {
@@ -149,6 +169,106 @@ export interface components {
       user_id: string;
       /** Name */
       name: string;
+    };
+    /** ReadUserTripsResponse */
+    ReadUserTripsResponse: {
+      /** Trips */
+      trips: components["schemas"]["Trip"][];
+    };
+    /**
+     * Review
+     * @description Represents a Review record
+     */
+    Review: {
+      /** Id */
+      id: string;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      by?: components["schemas"]["User"];
+      /** Rating */
+      rating: number;
+      /** Content */
+      content?: string;
+      /** Place */
+      Place?: components["schemas"]["Place"][];
+      /** Userid */
+      userId: string;
+    };
+    /**
+     * Trip
+     * @description Represents a Trip record
+     */
+    Trip: {
+      /** Id */
+      id: string;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      /** Destination */
+      destination?: string;
+      /**
+       * Startdate
+       * Format: date-time
+       */
+      startDate?: string;
+      /**
+       * Enddate
+       * Format: date-time
+       */
+      endDate?: string;
+      itinerary?: components["schemas"]["prisma__models__Itinerary"];
+      /** Purpose */
+      purpose?: string;
+      /** Budget */
+      budget?: string;
+      /** Places */
+      places?: components["schemas"]["Place"][];
+      createdBy?: components["schemas"]["User"];
+      /** Userid */
+      userId?: string;
+      /** Messages */
+      messages?: components["schemas"]["prisma__models__Message"][];
+      /** Itineraryid */
+      itineraryId?: string;
+      /** Imageurl */
+      imageUrl?: string;
+    };
+    /**
+     * User
+     * @description Represents a User record
+     */
+    User: {
+      /** Id */
+      id: string;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      /** Trips */
+      trips?: components["schemas"]["Trip"][];
+      /** Review */
+      Review?: components["schemas"]["Review"][];
     };
     /** ValidationError */
     ValidationError: {
@@ -158,6 +278,53 @@ export interface components {
       msg: string;
       /** Error Type */
       type: string;
+    };
+    /**
+     * Itinerary
+     * @description Represents a Itinerary record
+     */
+    prisma__models__Itinerary: {
+      /** Id */
+      id: string;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      /** Content */
+      content?: string;
+      /** Trip */
+      Trip?: components["schemas"]["Trip"][];
+    };
+    /**
+     * Message
+     * @description Represents a Message record
+     */
+    prisma__models__Message: {
+      /** Id */
+      id: string;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      /** Content */
+      content: string;
+      /** Isbot */
+      isBot: boolean;
+      Trip?: components["schemas"]["Trip"];
+      /** Tripid */
+      tripId?: string;
     };
     /** Itinerary */
     routers__itineraries__Itinerary: {
@@ -172,6 +339,15 @@ export interface components {
       itinerary_id: string;
       /** Content */
       content: string;
+    };
+    /** Message */
+    typings__index__Message: {
+      /** Id */
+      id: string;
+      /** Text */
+      text: string;
+      /** Is User */
+      is_user: boolean;
     };
   };
   responses: never;
@@ -315,6 +491,34 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["CreateUserMessageResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Read User Trips
+   * @description Read trips that belong to a user
+   */
+  read_user_trips_users__user_id__trips_get: {
+    parameters: {
+      query?: {
+        upcoming?: boolean;
+      };
+      path: {
+        user_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ReadUserTripsResponse"];
         };
       };
       /** @description Validation Error */

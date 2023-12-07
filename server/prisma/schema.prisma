@@ -36,6 +36,7 @@ model Trip {
   userId      String?
   messages    Message[]
   itineraryId String?
+  imageUrl    String?
 }
 
 model Itinerary {
