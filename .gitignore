@@ -1,3 +1,5 @@
 .env
 node_modules/
 google-credentials.json
+lib64/**/__pycache__/
+lib/**/__pycache__/
