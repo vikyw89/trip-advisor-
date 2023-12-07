@@ -4,5 +4,6 @@ COPY . .
 RUN pip install poetry==1.7.1
 RUN poetry install
 RUN poetry run prisma migrate deploy
+RUN poetry run prisma generate
 EXPOSE 8000
 CMD poetry run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
