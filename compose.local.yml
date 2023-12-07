@@ -5,7 +5,7 @@ services:
       context: ./client
       dockerfile: Dockerfile.local
     ports:
-      - 5173:5173
+      - 3000:3000
     volumes:
       - ./client:/app
     restart: always
@@ -16,8 +16,8 @@ services:
     build: 
       context: ./server
       dockerfile: Dockerfile.local
-    expose:
-      - 8000
+    ports:
+      - 8000:8000
     volumes:
       - ./server:/app
     restart: always

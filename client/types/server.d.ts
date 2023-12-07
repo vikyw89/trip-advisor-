@@ -56,6 +56,13 @@ export interface paths {
      */
     post: operations["create_user_message_users__user_id__trips__trip_id__messages_post"];
   };
+  "/users/{user_id}/trips": {
+    /**
+     * Create User Trip
+     * @description Create a new trip for a user
+     */
+    post: operations["create_user_trip_users__user_id__trips_post"];
+  };
   "/users/{user_id}/trips/{trip_id}/messages/subscribe": {
     /**
      * Subscribe User Messages
@@ -70,40 +77,12 @@ export interface paths {
      */
     get: operations["subscribe_user_messages_users__user_id__trips__trip_id__messages_subscribe_get"];
   };
-  "/users/{user_id}/itineraries": {
+  "/trips/{trip_id}/itineraries": {
     /**
-     * Save User Itinerary
-     * @description Saves a user's itinerary.
-     *
-     *     Args:
-     *         user_id (int): The ID of the user.
-     *         input (SaveUserItineraryInput): The input data for saving the user's itinerary.
-     *
-     *     Returns:
-     *         SaveUserItineraryResponse: The response containing the status, success flag, and itinerary ID.
+     * Read Trip Itineraries
+     * @description Get a itinerary from a trip
      */
-    post: operations["save_user_itinerary_users__user_id__itineraries_post"];
-  };
-  "/users/{user_id}/locations": {
-    /**
-     * Save User Location
-     * @description Save a user's location.
-     *
-     *     Args:
-     *         user_id (int): The ID of the user.
-     *         input (SaveUserLocationInput): The input data for saving the user's location.
-     *
-     *     Returns:
-     *         SaveUserItineraryResponse: The response object indicating the status and success of saving the user's location.
-     */
-    post: operations["save_user_location_users__user_id__locations_post"];
-  };
-  "/users/{user_id}/trips/{trip_id}/itineraries": {
-    /**
-     * Read User Trip Itineraries
-     * @description Get a user's itinerary.
-     */
-    get: operations["read_user_trip_itineraries_users__user_id__trips__trip_id__itineraries_get"];
+    get: operations["read_trip_itineraries_trips__trip_id__itineraries_get"];
   };
   "/": {
     /** Read Root */
@@ -129,6 +108,15 @@ export interface components {
       /** Code */
       code: number;
     };
+    /** CreateUserTripResponse */
+    CreateUserTripResponse: {
+      /** Success */
+      success: boolean;
+      /** Code */
+      code: number;
+      /** Tripid */
+      tripId: string;
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -143,10 +131,10 @@ export interface components {
       /** Is User */
       is_user: boolean;
     };
-    /** ReadUserItineraryResponse */
-    ReadUserItineraryResponse: {
+    /** ReadTripItinerariesResponse */
+    ReadTripItinerariesResponse: {
       /** Itineraries */
-      itineraries: components["schemas"]["routers__users__Itinerary"][];
+      itineraries: components["schemas"]["typings__index__Itinerary"][];
       /** Trip Id */
       trip_id: string;
     };
@@ -161,27 +149,6 @@ export interface components {
       user_id: string;
       /** Name */
       name: string;
-    };
-    /** SaveUserItineraryInput */
-    SaveUserItineraryInput: {
-      /** Content */
-      content: string;
-    };
-    /** SaveUserItineraryResponse */
-    SaveUserItineraryResponse: {
-      /** Status */
-      status: number;
-      /** Success */
-      success: boolean;
-      /** Itinerary Id */
-      itinerary_id: string;
-    };
-    /** SaveUserLocationInput */
-    SaveUserLocationInput: {
-      /** Latitude */
-      latitude: number;
-      /** Longitude */
-      longitude: number;
     };
     /** ValidationError */
     ValidationError: {
@@ -200,7 +167,7 @@ export interface components {
       content: string;
     };
     /** Itinerary */
-    routers__users__Itinerary: {
+    typings__index__Itinerary: {
       /** Itinerary Id */
       itinerary_id: string;
       /** Content */
@@ -359,6 +326,31 @@ export interface operations {
     };
   };
   /**
+   * Create User Trip
+   * @description Create a new trip for a user
+   */
+  create_user_trip_users__user_id__trips_post: {
+    parameters: {
+      path: {
+        user_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["CreateUserTripResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
    * Subscribe User Messages
    * @description Subscribe to user messages.
    *
@@ -392,87 +384,12 @@ export interface operations {
     };
   };
   /**
-   * Save User Itinerary
-   * @description Saves a user's itinerary.
-   *
-   *     Args:
-   *         user_id (int): The ID of the user.
-   *         input (SaveUserItineraryInput): The input data for saving the user's itinerary.
-   *
-   *     Returns:
-   *         SaveUserItineraryResponse: The response containing the status, success flag, and itinerary ID.
+   * Read Trip Itineraries
+   * @description Get a itinerary from a trip
    */
-  save_user_itinerary_users__user_id__itineraries_post: {
+  read_trip_itineraries_trips__trip_id__itineraries_get: {
     parameters: {
       path: {
-        user_id: string;
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SaveUserItineraryInput"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["SaveUserItineraryResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
-   * Save User Location
-   * @description Save a user's location.
-   *
-   *     Args:
-   *         user_id (int): The ID of the user.
-   *         input (SaveUserLocationInput): The input data for saving the user's location.
-   *
-   *     Returns:
-   *         SaveUserItineraryResponse: The response object indicating the status and success of saving the user's location.
-   */
-  save_user_location_users__user_id__locations_post: {
-    parameters: {
-      path: {
-        user_id: string;
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SaveUserLocationInput"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["SaveUserItineraryResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
-   * Read User Trip Itineraries
-   * @description Get a user's itinerary.
-   */
-  read_user_trip_itineraries_users__user_id__trips__trip_id__itineraries_get: {
-    parameters: {
-      path: {
-        user_id: string;
         trip_id: string;
       };
     };
@@ -480,7 +397,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["ReadUserItineraryResponse"];
+          "application/json": components["schemas"]["ReadTripItinerariesResponse"];
         };
       };
       /** @description Validation Error */

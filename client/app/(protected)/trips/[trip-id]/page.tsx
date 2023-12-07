@@ -15,7 +15,7 @@ export default function Page() {
 	const isNewTrip = tripId === 'new';
 	const [sendMessage, sendMessageRes] = useSendMessageMutation();
 	const { data: messages, isLoading: isLoadingMessages } = useReadMessagesQuery(
-		{ order: 'desc', limit: 20, tripId: tripId }
+		{ order: 'asc', limit: 20, tripId: tripId }
 	);
 	const { data: itineraries, isLoading: isLoadingItineraries } =
 		useReadItinerariesQuery({ tripId: tripId });
@@ -46,7 +46,7 @@ export default function Page() {
 	};
 	return (
 		<main className='w-full h-full flex justify-center'>
-			<div className='max-w-screen-sm text-base-content/70 flex flex-col justify-end relative w-full overflow-y-scroll'>
+			<div className='max-w-screen-sm text-base-content/70 flex flex-col justify-end relative w-full overflow-y-scroll scrollbar scrollbar-thumb-base-300 scrollbar-track-base-100'>
 				{isNewTrip && (
 					<div className='top-0 absolute  w-full text-center p-2 animate-jump animate-twice animate-ease-in-out'>
 						It’s a big world, tell me where do you want to explore?

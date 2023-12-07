@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCreateTripMutation } from '@/store/tripApi';
 export const Place = z.object({
 	id: z.string(),
 	name: z.string(),
@@ -26,9 +27,17 @@ export const TripCard = ({ props }: { props: TripCardProps }) => {
 	const ref = useRef(null);
 	const isInView = useInView(ref, { amount: 0.7 });
     const router = useRouter()
-    const tripCardClickHandler = (e:React.MouseEvent<HTMLDivElement>) => {
+	const [createTrip, createTripResponse] = useCreateTripMutation()
+
+    const tripCardClickHandler = async (e:React.MouseEvent<HTMLDivElement>) => {
         // check if it's a new card or existing one
-        router.push(`/trips/${props.id}`);
+		// create a new trip
+		let tripId = props.id
+		if (props.isNewTrip){
+			const res = await createTrip({}).unwrap()
+			tripId = res.tripId
+		}
+        router.push(`/trips/${tripId}`);
     }
 	return (
 		<div

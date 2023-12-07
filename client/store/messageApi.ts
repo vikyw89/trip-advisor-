@@ -3,6 +3,7 @@ import { emptySplitApi } from './emptySplitApi';
 import { SERVER_BASE_URL, serverApi } from '@/libs/server';
 import { jsonStreamIterator } from '@/libs/streamAsyncIterator';
 import { z } from 'zod';
+import { v4 } from 'uuid';
 
 let isStreamingMessage = false;
 
@@ -28,13 +29,17 @@ const messageApi = emptySplitApi.injectEndpoints({
 						const fileUploadRes = await supabase.storage
 							.from('files')
 							.upload(
-								`${session.data.session?.user?.id}/${tripId}/${Date.now().toString()}`,
+								`${
+									session.data.session?.user?.id
+								}/${tripId}/${Date.now().toString()}`,
 								file
 							);
 						fileUrl = supabase.storage
 							.from('files')
 							.getPublicUrl(
-								`${session.data.session?.user?.id}/${tripId}/${Date.now().toString()}`
+								`${
+									session.data.session?.user?.id
+								}/${tripId}/${Date.now().toString()}`
 							).data.publicUrl;
 					}
 
@@ -66,6 +71,34 @@ const messageApi = emptySplitApi.injectEndpoints({
 					};
 				}
 			},
+			// onQueryStarted: async (patch, { dispatch, queryFulfilled }) => {
+			// 	const patchResult = dispatch(
+			// 		messageApi.util.updateQueryData(
+			// 			'readMessages',
+			// 			{ order: 'asc', limit: 20, tripId: patch.tripId },
+			// 			(draft) => {
+			// 				draft.push({
+			// 					id: v4(),
+			// 					text: patch.text,
+			// 					isUser: true,
+			// 					isLoading: false,
+			// 				});
+			// 			}
+			// 		)
+			// 	);
+			// 	try {
+			// 		await queryFulfilled;
+			// 	} catch {
+			// 		patchResult.undo();
+
+			// 		/**
+			// 		 * Alternatively, on failure you can invalidate the corresponding cache tags
+			// 		 * to trigger a re-fetch:
+			// 		 * dispatch(api.util.invalidateTags(['Post']))
+			// 		 */
+			// 	}
+			// },
+			// invalidatesTags:["message"]
 		}),
 		readMessages: builder.query<
 			Array<{
@@ -120,6 +153,7 @@ const messageApi = emptySplitApi.injectEndpoints({
 					return { error };
 				}
 			},
+			providesTags: ['message'],
 			onCacheEntryAdded: async (
 				args,
 				{ cacheDataLoaded, cacheEntryRemoved, updateCachedData }
@@ -211,7 +245,8 @@ const messageApi = emptySplitApi.injectEndpoints({
 							}
 							case 'delete': {
 								updateCachedData((draft) => {
-									draft.filter((v) => v.id !== messageContent.id);
+									draft = draft.filter((v) => v.id !== 'streaming');
+									return draft;
 								});
 								break;
 							}

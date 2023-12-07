@@ -19,17 +19,13 @@ const itineraryApi = emptySplitApi.injectEndpoints({
 						throw new Error('Session expired');
 					}
 
-					const res = await serverApi.GET(
-						'/users/{user_id}/trips/{trip_id}/itineraries',
-						{
-							params: {
-								path: {
-									user_id: session.data.session?.user.id,
-									trip_id: tripId,
-								},
-							},
+					const res = await serverApi.GET("/trips/{trip_id}/itineraries",{
+						params:{
+							path:{
+								trip_id: tripId
+							}
 						}
-					);
+					})
 
 					if (res.error) {
 						throw new Error('Failed to retrieve itinearies');
@@ -65,7 +61,7 @@ const itineraryApi = emptySplitApi.injectEndpoints({
 							},
 						},
 					});
-
+					
 					if (res.error) {
 						throw new Error('Failed to retrieve itinerary');
 					}

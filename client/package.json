@@ -27,6 +27,7 @@
     "react-redux": "^9.0.1",
     "remark-gfm": "^4.0.0",
     "tailwindcss-animated": "^1.0.1",
+    "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -34,6 +35,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.7",
     "autoprefixer": "^10.0.1",
     "daisyui": "^4.4.19",
     "eslint": "^8",
