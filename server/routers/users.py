@@ -1,9 +1,12 @@
 import json
 from typing import Generator, Iterable, List, Literal, Optional
+import uuid
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
+from libs.redis.index import PubSub
+from typings.index import Itinerary, Message, MessageEvent
+from libs.prisma.index import db
 
 router = APIRouter(prefix="/users")
 
@@ -27,13 +30,6 @@ class ReadUserResponse(BaseModel):
 )
 def read_user(user_id: str) -> ReadUserResponse:
     return ReadUserResponse(user_id=user_id, name="test")
-
-
-class Message(BaseModel):
-    id: str
-    text: str
-    is_user: bool
-
 
 
 class ReadUserMessagesResponse(BaseModel):
@@ -63,15 +59,55 @@ class ReadUserMessagesResponse(BaseModel):
 )
 def read_user_messages(
     user_id: str,
-    order: Optional[Literal["asc", "desc"]] = None,
-    limit: Optional[int] = None,
+    order: Optional[Literal["asc", "desc"]] = "asc",
+    limit: Optional[int] = 20,
     after: Optional[str] = None,
     before: Optional[str] = None,
     trip_id: Optional[str] = None,
 ) -> ReadUserMessagesResponse:
-    # TODO: implement read user messages
-    return ReadUserMessagesResponse(
-        messages=[Message(id="dsadd", text="test", is_user=True)]
+    # get user messages from DB
+    # TODO: implement customizable pagination
+    trip_messages = db.trip.find_unique(
+        where={"id": trip_id},
+        include={"messages": {"take": limit, "order_by": {"createdAt": order}}},
+    )
+
+    # parse messages
+    messages = []
+
+    for message in trip_messages.messages:
+        # some additional parsing ?
+        messages.append(
+            Message(
+                id=message.id,
+                text=message.content,
+                is_user=False if message.isBot else True,
+            )
+        )
+
+    return ReadUserMessagesResponse(messages=messages)
+
+
+class CreateUserTripResponse(BaseModel):
+    success: bool
+    code: int
+    tripId: str
+
+
+@router.post(
+    path="/{user_id}/trips",
+    description="""
+             Create a new trip for a user
+             """,
+)
+def create_user_trip(user_id: str) -> CreateUserTripResponse:
+    # TODO: create user trip
+    create_user_trip_response = db.trip.create(
+        data={"userId": user_id},
+    )
+    print(create_user_trip_response)
+    return CreateUserTripResponse(
+        code=200, success=True, tripId=create_user_trip_response.id
     )
 
 
@@ -101,13 +137,122 @@ class CreateUserMessageResponse(BaseModel):
 def create_user_message(
     user_id: str, trip_id: str, input: CreateUserMessageInput
 ) -> CreateUserMessageResponse:
-    # TODO: implement create user message
+    # add message to db
+    pubsub = PubSub(user_id=user_id, trip_id=trip_id)
+
+    # publish messages to pubsub
+    pubsub.publish(
+        MessageEvent(
+            event="create",
+            message=Message(
+                id=str(uuid.uuid4()),
+                text=input.text,
+                is_user=True,
+            ),
+        )
+    )
+    
+    save_message_response = db.message.create(
+        data={
+            "content": input.text,
+            "tripId": trip_id,
+            "isBot": False,
+        },
+        include={"Trip": True},
+    )
+
+    # # delete messages to pubsub
+    # pubsub.publish(
+    #     MessageEvent(
+    #         event="delete",
+    #         message=Message(
+    #             id="draft",
+    #             text=save_message_response.content,
+    #             is_user=True,
+    #         ),
+    #     )
+    # )
+    # # create user message with correct uuid
+    # pubsub.publish(
+    #     MessageEvent(
+    #         event="delete",
+    #         message=Message(
+    #             id=save_message_response.id,
+    #             text=save_message_response.content,
+    #             is_user=True,
+    #         ),
+    #     )
+    # )
+
+    # TODO: implement AI streaming response
+    # create an empty message
+    pubsub.publish(
+        MessageEvent(
+            event="create",
+            message=Message(
+                id="streaming",
+                text="",
+                is_user=False
+            )
+        )
+    )
+    
+    def streaming():
+        message_to_stream = "this is a test response"
+        for character in message_to_stream:
+            yield character
+    
+    complete_message = ""
+    for stream in streaming():
+        complete_message += stream
+        # dummy response for the moment
+        pubsub.publish(
+            MessageEvent(
+                event="update",
+                message=Message(
+                    id="streaming",
+                    text=complete_message,
+                    is_user=False
+                )
+            )
+        )
+
+    # after streaming finishes, we store the ai complete message in db
+    save_ai_response = db.message.create(
+        data={
+            "content": "put streaming response here",
+            "tripId": trip_id,
+            "isBot": True,
+        },
+        include={"Trip": True},
+    )
+
+    # publish ai complete response to pubsub, update the message ID
+    pubsub.publish(
+        MessageEvent(
+            event="delete",
+            message=Message(
+                id="streaming",
+                text="delete",
+                is_user=False
+            )
+        )
+    )
+    
+    pubsub.publish(
+        MessageEvent(
+            event="create",
+            message=Message(
+                id=save_ai_response.id, text=save_ai_response.content, is_user=False
+            ),
+            is_user=False
+        )
+    )
+
+    # return successfull mutation
     return CreateUserMessageResponse(success=True, code=200)
 
-class MessageEvent(BaseModel):
-    event:Literal["create","update","delete"]
-    message:Message
-    
+
 @router.get(
     path="/{user_id}/trips/{trip_id}/messages/subscribe",
     description="""
@@ -121,73 +266,73 @@ class MessageEvent(BaseModel):
     :rtype: Generator[Message, None, None]
     """,
 )
-def subscribe_user_messages(user_id: str, trip_id:str) -> Iterable[str]:
+def subscribe_user_messages(user_id: str, trip_id: str) -> Iterable[str]:
     def gen():
         # TODO: implement subscribe user messages
-        messages_events = [MessageEvent(event="create",message=Message(id="dsadaaaa", text="testss",is_user=True)).json(),MessageEvent(event="create",message=Message(id="22222", text="testdddss",is_user=True)).json()]
-        for message_event in messages_events:
+        events = PubSub(user_id=user_id, trip_id=trip_id)
+        for message_event in events.subscribe():
             print(message_event)
-            yield json.dumps(message_event) + "\n" 
+            yield json.dumps(message_event) + "\n"
 
     return StreamingResponse(content=gen(), media_type="text/event-stream")
 
 
-class SaveUserItineraryInput(BaseModel):
-    content: str
+# class SaveUserItineraryInput(BaseModel):
+#     content: str
 
 
-class SaveUserItineraryResponse(BaseModel):
-    status: int
-    success: bool
-    itinerary_id: str
+# class SaveUserItineraryResponse(BaseModel):
+#     status: int
+#     success: bool
+#     itinerary_id: str
 
 
-@router.post(
-    path="/{user_id}/itineraries",
-    description="""
-    Saves a user's itinerary.
+# @router.post(
+#     path="/{user_id}/itineraries",
+#     description="""
+#     Saves a user's itinerary.
 
-    Args:
-        user_id (int): The ID of the user.
-        input (SaveUserItineraryInput): The input data for saving the user's itinerary.
+#     Args:
+#         user_id (int): The ID of the user.
+#         input (SaveUserItineraryInput): The input data for saving the user's itinerary.
 
-    Returns:
-        SaveUserItineraryResponse: The response containing the status, success flag, and itinerary ID.
-    """,
-)
-def save_user_itinerary(
-    user_id: str, input: SaveUserItineraryInput
-) -> SaveUserItineraryResponse:
-    # TODO: implement save user itinerary
-    return SaveUserItineraryResponse(status=200, success=True, itinerary_id="test")
-
-
-class SaveUserLocationInput(BaseModel):
-    latitude: float
-    longitude: float
+#     Returns:
+#         SaveUserItineraryResponse: The response containing the status, success flag, and itinerary ID.
+#     """,
+# )
+# def save_user_itinerary(
+#     user_id: str, input: SaveUserItineraryInput
+# ) -> SaveUserItineraryResponse:
+#     # TODO: implement save user itinerary
+#     return SaveUserItineraryResponse(status=200, success=True, itinerary_id="test")
 
 
-class SaveUserLocationResponse(BaseModel):
-    status: int
-    success: bool
+# class SaveUserLocationInput(BaseModel):
+#     latitude: float
+#     longitude: float
 
 
-@router.post(
-    path="/{user_id}/locations",
-    description="""
-    Save a user's location.
+# class SaveUserLocationResponse(BaseModel):
+#     status: int
+#     success: bool
 
-    Args:
-        user_id (int): The ID of the user.
-        input (SaveUserLocationInput): The input data for saving the user's location.
 
-    Returns:
-        SaveUserItineraryResponse: The response object indicating the status and success of saving the user's location.
-    """,
-)
-def save_user_location(
-    user_id: str, input: SaveUserLocationInput
-) -> SaveUserItineraryResponse:
-    # TODO: implement save user location
+# @router.post(
+#     path="/{user_id}/locations",
+#     description="""
+#     Save a user's location.
 
-    return SaveUserLocationResponse(status=200, success=True)
+#     Args:
+#         user_id (int): The ID of the user.
+#         input (SaveUserLocationInput): The input data for saving the user's location.
+
+#     Returns:
+#         SaveUserLocationResponse: The response object indicating the status and success of saving the user's location.
+#     """,
+# )
+# def save_user_location(
+#     user_id: str, input: SaveUserLocationInput
+# ) -> SaveUserLocationResponse:
+#     # TODO: implement save user location
+
+#     return SaveUserLocationResponse(status=200, success=True)

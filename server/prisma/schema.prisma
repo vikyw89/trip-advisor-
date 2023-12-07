@@ -17,4 +17,62 @@ model User {
   id        String   @id
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  trips     Trip[]
+  Review    Review[]
+}
+
+model Trip {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+  destination String?
+  startDate   DateTime?
+  endDate     DateTime?
+  itinerary   Itinerary? @relation(fields: [itineraryId], references: [id])
+  purpose     String?
+  budget      String?
+  places      Place[]
+  createdBy   User?      @relation(fields: [userId], references: [id])
+  userId      String?
+  messages    Message[]
+  itineraryId String?
+}
+
+model Itinerary {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  content   String?
+  Trip      Trip[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  content   String
+  isBot     Boolean
+  Trip      Trip?    @relation(fields: [tripId], references: [id])
+  tripId    String?
+}
+
+model Place {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  reviews   Review   @relation(fields: [reviewId], references: [id])
+  Trip      Trip?    @relation(fields: [tripId], references: [id])
+  tripId    String?
+  reviewId  String
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  by        User     @relation(fields: [userId], references: [id])
+  rating    Int
+  content   String?
+  Place     Place[]
+  userId    String
 }

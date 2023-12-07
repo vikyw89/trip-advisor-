@@ -1,14 +1,14 @@
 services:
 
-  client:
-    build: 
-      context: ./client
-      dockerfile: Dockerfile.local
-    ports:
-      - 3000:3000
-    volumes:
-      - ./client:/app
-    restart: always
+  # client:
+  #   build: 
+  #     context: ./client
+  #     dockerfile: Dockerfile.local
+  #   ports:
+  #     - 5173:5173
+  #   volumes:
+  #     - ./client:/app
+  #   restart: always
 
   server:
     depends_on:

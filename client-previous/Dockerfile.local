@@ -1,0 +1,6 @@
+FROM node:21.3.0-alpine as BASE
+WORKDIR /app
+COPY . .
+RUN npm i
+EXPOSE 5173
+CMD npm run dev
