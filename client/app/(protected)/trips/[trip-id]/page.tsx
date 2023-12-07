@@ -47,9 +47,9 @@ export default function Page() {
 	return (
 		<main className='w-full h-full flex justify-center'>
 			<div className='max-w-screen-sm text-base-content/70 flex flex-col justify-end relative w-full overflow-y-scroll scrollbar scrollbar-thumb-base-300 scrollbar-track-base-100'>
-				{isNewTrip && (
-					<div className='top-0 absolute  w-full text-center p-2 animate-jump animate-twice animate-ease-in-out'>
-						It’s a big world, tell me where do you want to explore?
+				{messages && messages.length === 0 && (
+					<div className='top-0 absolute w-full text-center p-2 animate-jump animate-once animate-ease-in-out duration-300'>
+						It’s a <span className='font-bold text-4xl text-primary '>BIG</span> world, tell me where do you want to explore?
 					</div>
 				)}
 				{messages &&

@@ -1,3 +1,4 @@
+import datetime
 import json
 from typing import Generator, Iterable, List, Literal, Optional
 import uuid
@@ -71,7 +72,6 @@ def read_user_messages(
         where={"id": trip_id},
         include={"messages": {"take": limit, "order_by": {"createdAt": order}}},
     )
-
     # parse messages
     messages = []
 
@@ -86,6 +86,48 @@ def read_user_messages(
         )
 
     return ReadUserMessagesResponse(messages=messages)
+
+
+from prisma.models import Trip
+
+
+class ReadUserTripsResponse(BaseModel):
+    trips: List[Trip]
+
+
+@router.get(
+    path="/{user_id}/trips",
+    description="""
+            Read trips that belong to a user
+            """,
+)
+def read_user_trips(
+    user_id: str, upcoming: Optional[bool] = None
+) -> ReadUserTripsResponse:
+    # TODO: read user trips
+    trips = []
+    # if upcoming
+    from datetime import datetime
+
+    if upcoming:
+        # we also add trips that has no end date
+        trips = db.trip.find_many(
+            where={
+                "userId": user_id,
+                "OR": [
+                    {
+                        "endDate": {"gt": datetime.now()},
+                    },
+                    {"endDate": None},
+                ],
+            }
+        )
+    else:
+        trips = db.trip.find_many(
+            where={"userId": user_id, "endDate": {"lt": datetime.now()}}
+        )
+
+    return ReadUserTripsResponse(trips=trips)
 
 
 class CreateUserTripResponse(BaseModel):
@@ -151,7 +193,7 @@ def create_user_message(
             ),
         )
     )
-    
+
     save_message_response = db.message.create(
         data={
             "content": input.text,
@@ -188,20 +230,15 @@ def create_user_message(
     # create an empty message
     pubsub.publish(
         MessageEvent(
-            event="create",
-            message=Message(
-                id="streaming",
-                text="",
-                is_user=False
-            )
+            event="create", message=Message(id="streaming", text="", is_user=False)
         )
     )
-    
+
     def streaming():
         message_to_stream = "this is a test response"
         for character in message_to_stream:
             yield character
-    
+
     complete_message = ""
     for stream in streaming():
         complete_message += stream
@@ -209,11 +246,7 @@ def create_user_message(
         pubsub.publish(
             MessageEvent(
                 event="update",
-                message=Message(
-                    id="streaming",
-                    text=complete_message,
-                    is_user=False
-                )
+                message=Message(id="streaming", text=complete_message, is_user=False),
             )
         )
 
@@ -231,21 +264,17 @@ def create_user_message(
     pubsub.publish(
         MessageEvent(
             event="delete",
-            message=Message(
-                id="streaming",
-                text="delete",
-                is_user=False
-            )
+            message=Message(id="streaming", text="delete", is_user=False),
         )
     )
-    
+
     pubsub.publish(
         MessageEvent(
             event="create",
             message=Message(
                 id=save_ai_response.id, text=save_ai_response.content, is_user=False
             ),
-            is_user=False
+            is_user=False,
         )
     )
 
