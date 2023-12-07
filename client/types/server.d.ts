@@ -5,6 +5,10 @@
 
 
 export interface paths {
+  "/itineraries/{itinerary_id}": {
+    /** Read Itinerary */
+    get: operations["read_itinerary_itineraries__itinerary_id__get"];
+  };
   "/users/{user_id}": {
     /**
      * Read User
@@ -94,6 +98,13 @@ export interface paths {
      */
     post: operations["save_user_location_users__user_id__locations_post"];
   };
+  "/users/{user_id}/trips/{trip_id}/itineraries": {
+    /**
+     * Read User Trip Itineraries
+     * @description Get a user's itinerary.
+     */
+    get: operations["read_user_trip_itineraries_users__user_id__trips__trip_id__itineraries_get"];
+  };
   "/": {
     /** Read Root */
     get: operations["read_root__get"];
@@ -131,6 +142,13 @@ export interface components {
       text: string;
       /** Is User */
       is_user: boolean;
+    };
+    /** ReadUserItineraryResponse */
+    ReadUserItineraryResponse: {
+      /** Itineraries */
+      itineraries: components["schemas"]["routers__users__Itinerary"][];
+      /** Trip Id */
+      trip_id: string;
     };
     /** ReadUserMessagesResponse */
     ReadUserMessagesResponse: {
@@ -174,6 +192,20 @@ export interface components {
       /** Error Type */
       type: string;
     };
+    /** Itinerary */
+    routers__itineraries__Itinerary: {
+      /** Itinerary Id */
+      itinerary_id: string;
+      /** Content */
+      content: string;
+    };
+    /** Itinerary */
+    routers__users__Itinerary: {
+      /** Itinerary Id */
+      itinerary_id: string;
+      /** Content */
+      content: string;
+    };
   };
   responses: never;
   parameters: never;
@@ -188,6 +220,28 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  /** Read Itinerary */
+  read_itinerary_itineraries__itinerary_id__get: {
+    parameters: {
+      path: {
+        itinerary_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["routers__itineraries__Itinerary"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /**
    * Read User
    * @description A function that reads a user based on the provided user ID.
@@ -401,6 +455,32 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["SaveUserItineraryResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Read User Trip Itineraries
+   * @description Get a user's itinerary.
+   */
+  read_user_trip_itineraries_users__user_id__trips__trip_id__itineraries_get: {
+    parameters: {
+      path: {
+        user_id: string;
+        trip_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ReadUserItineraryResponse"];
         };
       };
       /** @description Validation Error */

@@ -191,3 +191,22 @@ def save_user_location(
     # TODO: implement save user location
 
     return SaveUserLocationResponse(status=200, success=True)
+
+class Itinerary(BaseModel):
+    itinerary_id: str
+    content: str
+
+class ReadUserItineraryResponse(BaseModel):
+    itineraries:List[Itinerary]
+    trip_id:str
+    
+@router.get(
+    path="/{user_id}/trips/{trip_id}/itineraries",
+    description="""
+    Get a user's itinerary."""
+)
+def read_user_trip_itineraries(
+    user_id: str, trip_id: str
+) -> ReadUserItineraryResponse:
+    # TODO: implement read user trip itinerary
+    return ReadUserItineraryResponse(itineraries=[Itinerary(itinerary_id="test",content="test")],trip_id=trip_id)

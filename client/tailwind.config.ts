@@ -15,7 +15,7 @@ const config: Config = {
 			},
 		},
 	},
-	plugins: [require('daisyui'), require('tailwind-scrollbar'),require('tailwindcss-animated')],
+	plugins: [require('@tailwindcss/typography'),require('daisyui'), require('tailwind-scrollbar'),require('tailwindcss-animated')],
 	daisyui: {
 		themes: ['light', 'dark', 'cupcake'],
 	},

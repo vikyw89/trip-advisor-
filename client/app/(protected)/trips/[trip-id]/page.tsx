@@ -1,11 +1,12 @@
 'use client';
 
 import { Message } from '@/components/Message';
+import { useReadItinerariesQuery } from '@/store/itinerary';
 import {
 	useReadMessagesQuery,
 	useSendMessageMutation,
 } from '@/store/messageApi';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
 
 export default function Page() {
@@ -16,6 +17,9 @@ export default function Page() {
 	const { data: messages, isLoading: isLoadingMessages } = useReadMessagesQuery(
 		{ order: 'desc', limit: 20, tripId: tripId }
 	);
+	const { data: itineraries, isLoading: isLoadingItineraries } =
+		useReadItinerariesQuery({ tripId: tripId });
+	const router = useRouter();
 
 	const sendMessageHandler = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -32,9 +36,17 @@ export default function Page() {
 		});
 	};
 
+	const itineraryClickHandler = (
+		e: React.MouseEvent<HTMLButtonElement>
+	) => {
+		e.preventDefault();
+		const itineraryId = e.currentTarget.dataset.id;
+		// navigate to itinerary page
+		router.push(`/itineraries/${itineraryId}`);
+	};
 	return (
 		<main className='w-full h-full flex justify-center'>
-			<div className='max-w-screen-sm text-base-content/70 flex flex-col justify-end relative w-full'>
+			<div className='max-w-screen-sm text-base-content/70 flex flex-col justify-end relative w-full overflow-y-scroll'>
 				{isNewTrip && (
 					<div className='top-0 absolute  w-full text-center p-2 animate-jump animate-twice animate-ease-in-out'>
 						It’s a big world, tell me where do you want to explore?
@@ -54,6 +66,21 @@ export default function Page() {
 						);
 					})}
 				<div className='p-2'>
+					{itineraries && (
+						<div>
+							{itineraries.itineraries.map((v) => {
+								return (
+									<button
+										data-id={v.itineraryId}
+										onClick={itineraryClickHandler}
+										key={v.itineraryId}
+									>
+										{v.itineraryId}
+									</button>
+								);
+							})}
+						</div>
+					)}
 					<form
 						className='w-full flex shadow-md rounded-full border-2 bg-base-300'
 						onSubmit={sendMessageHandler}
