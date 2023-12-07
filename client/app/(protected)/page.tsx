@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import Image from 'next/image';
 
-export const InitialState = {
+const InitialState = {
 	trips: [
 		{
 			id: 'ddd',
@@ -160,7 +160,7 @@ export default function Page() {
 						<div className='flex justify-center w-full z-10'>
 							<div className='avatar z-10 animate-jump animate-twice animate-ease-in-out'>
 								<div className='w-24 rounded-full shadow-lg'>
-									<img src={avatarUrl ?? ''} />
+									<img src={avatarUrl ?? ''} alt="avatar"/>
 								</div>
 							</div>
 						</div>
@@ -187,6 +187,7 @@ export default function Page() {
 					{InitialState.trips.map((trip) => {
 						return (
 							<TripCard
+								key={trip.id}
 								props={{
 									id: trip.id,
 									startDate: trip.startDate,
