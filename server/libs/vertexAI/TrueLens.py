@@ -66,80 +66,6 @@ class GenerateChat:
             verbose=True,
         )
         
-#         template = """You are a chatbot having a conversation with a human.
-#         {chat_history}
-#         Human: {human_input}
-#         Chatbot:"""
-#         self.prompt = PromptTemplate(
-#        input_variables=["chat_history", "human_input"], template=template
-# )
-        # self.memory = ConversationBufferMemory()
-
-
-#     def generate(self, input_text,userid):
-#         userid= "a" + str(userid)
-
-#         DEFAULT_TEMPLATE = """
-#         {user_id}
-#         The following is a friendly conversation between a human and an AI called TripGpt. 
-#    ,The Ai is a Trip Planner assitant designed to make Trips.
-#    If the AI does not know the answer to a question, it truthfully says it does not know or reply with the same question.
-   
-# dont act friendly , if i asked you something be rude
-# Relevant pieces of previous conversation:
-# {history}
-# (You do not need to use these pieces of information if not relevant)
-
-# Current conversation:
-# Human: {input}
-# AI:"""
-    
-#         formatted_template = DEFAULT_TEMPLATE.format(user_id="{"+userid+"}",history = "{history}",input = "{input}")
-
-#         PROMPT = PromptTemplate(
-#         input_variables=[userid,"history", "input"], template=formatted_template
-#     )
-        
-#         vectordb = Milvus.from_documents(
-#            {} ,
-#             embeddings,
-             
-#              connection_args={
-#         "uri": ZILLIZ_CLOUD_URI,
-    
-#         "token": ZILLIZ_CLOUD_API_KEY,  # API key, for serverless clusters which can be used as replacements for user and password
-#         "secure": True,
-#              }
-        
-   
-# )
-#         retriever = Milvus.as_retriever(vectordb,search_kwargs=dict(k=15),filter={"user_id": "a2"}) # here we use userid with "a" for retreiving memory
-#         memory= VectorStoreRetrieverMemory(retriever=retriever , memory_variables=["user_id","history"] ,  metadata={"user_id": "a2"})
-
-#         chain = ConversationChain(llm=self.llm, memory=memory, verbose=True,prompt= PROMPT)
-#         # Question/answer relevance between overall question and answer.
-# #         f_relevance = Feedback(openai.relevance).on_input_output()
-# #         f_lang_match = Feedback(hugs.language_match).on_input_output()
-
-# #         # Moderation metrics on output
-# #         f_hate = Feedback(openai.moderation_hate).on_output()
-# #         f_violent = Feedback(openai.moderation_violence, higher_is_better=False).on_output()
-# #         f_selfharm = Feedback(openai.moderation_selfharm, higher_is_better=False).on_output()
-# #         f_maliciousness = Feedback(openai.maliciousness_with_cot_reasons, higher_is_better=False).on_output()
-# # # TruLens Eval chain recorder
-# #         chain_recorder = TruChain(
-# #         chain, app_id="travel-chat", feedbacks=[f_relevance, f_hate, f_violent, f_selfharm,f_lang_match, f_maliciousness]
-# #             )       
-#         res = chain.predict(input=input_text)
-#         # with chain_recorder as recording:
-#         #     llm_response = chain(input_text)
-   
-
-#         return    res
-
-
-
-
     def generate(self, input_text,trip_id):
         tripid= "a" + str(trip_id)
 
@@ -174,22 +100,68 @@ AI:"""
         chain = ConversationChain(llm=self.llm, memory=memory, prompt = PROMPT,verbose=True )
    
         res = chain.predict(input=input_text)
-        # with chain_recorder as recording:
-        #     llm_response = chain(input_text)
    
 
         return    res
+    
 
-     # Question/answer relevance between overall question and answer.
-#         f_relevance = Feedback(openai.relevance).on_input_output()
-#         f_lang_match = Feedback(hugs.language_match).on_input_output()
 
-#         # Moderation metrics on output
-#         f_hate = Feedback(openai.moderation_hate).on_output()
-#         f_violent = Feedback(openai.moderation_violence, higher_is_better=False).on_output()
-#         f_selfharm = Feedback(openai.moderation_selfharm, higher_is_better=False).on_output()
-#         f_maliciousness = Feedback(openai.maliciousness_with_cot_reasons, higher_is_better=False).on_output()
-# # TruLens Eval chain recorder
-#         chain_recorder = TruChain(
-#         chain, app_id="travel-chat", feedbacks=[f_relevance, f_hate, f_violent, f_selfharm,f_lang_match, f_maliciousness]
-#             )       
+
+
+
+
+
+
+    #True Lens 
+    def Truelens(self, input_text,trip_id):
+        tripid= "a" + str(trip_id)
+
+        DEFAULT_TEMPLATE = """
+        The following is a friendly conversation between a human and an AI called TripGpt. 
+   ,The Ai is a Trip Planner assitant designed to make Trips.
+   If the AI does not know the answer to a question, it truthfully says it does not know or reply with the same question.
+   
+dont act friendly , if i asked you something be rude
+Relevant pieces of previous conversation:
+{trip_id}
+(You do not need to use these pieces of information if not relevant)
+
+Current conversation:
+Human: {input}
+AI:"""
+    
+        formatted_template = DEFAULT_TEMPLATE.format(trip_id="{"+tripid+"}",input = "{input}")
+
+        PROMPT = PromptTemplate(
+        input_variables=[tripid, "input"], template=formatted_template
+    )
+        
+
+        vectordb = SupabaseVectorStore.from_documents({}, embeddings, client=supabase,user_id=tripid) # here we use normal userid "for saving memory"
+
+        # vectordb.
+        retriever = vectordb.as_retriever(search_kwargs=dict(k=15,user_id=tripid)) # here we use userid with "a" for retreiving memory
+
+        # print(retriever)
+        memory = VectorStoreRetrieverMemory(retriever=retriever, memory_key=tripid)
+        chain = ConversationChain(llm=self.llm, memory=memory, prompt = PROMPT,verbose=True )
+   
+    #  Question/answer relevance between overall question and answer.
+        f_relevance = Feedback(openai.relevance).on_input_output()
+        f_lang_match = Feedback(hugs.language_match).on_input_output()
+
+        # Moderation metrics on output
+        f_hate = Feedback(openai.moderation_hate).on_output()
+        f_violent = Feedback(openai.moderation_violence, higher_is_better=False).on_output()
+        f_selfharm = Feedback(openai.moderation_selfharm, higher_is_better=False).on_output()
+        f_maliciousness = Feedback(openai.maliciousness_with_cot_reasons, higher_is_better=False).on_output()
+
+        chain_recorder = TruChain(
+        chain, app_id="travel-chat", feedbacks=[f_relevance, f_hate, f_violent, f_selfharm,f_lang_match, f_maliciousness]
+            )     
+        # TruLens Eval chain recorder
+        with chain_recorder as recording:
+            llm_response = chain(input_text)
+    
+        return    chain.predict(input=input_text)
+
