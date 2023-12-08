@@ -12,7 +12,7 @@ docker compose -f compose.local.yml up
 
 head to localhost:5173
 
-![travel-planner-header](./client/docs/wanderlust_header.png)
+![Alt text](client-previous/public/tripbuddy.png)
 
 Travel Planner is a chatbot-based web application that can create itinerary based on the user's message. It is powered by PaLM, a large language model from Google. To use TripBuddy, simply type in a message that describes your interests or preferences, and it will generate an itinerary for you. You can also provide additional information to refine the itinerary.
 
@@ -30,7 +30,6 @@ The more conversational interface also lends itself better to serendipity, and t
 
 Potential Use Cases are clear for the Travel and Tourism industry but the same mechanics are transferable to retail and commerce for product recommendation, or discovery for Fashion or Media and Entertainment, or even configuration and personalization for Automotive.
 
-![travel-planner-demo](./client/docs/wanderlust_demo.png)
 
 ## Table of contents
 
@@ -60,7 +59,7 @@ Potential Use Cases are clear for the Travel and Tourism industry but the same m
 ### Install node modules
 
 ```bash
-yarn
+npm install
 ```
 
 ### Edit environment variables
@@ -75,13 +74,13 @@ VITE_GOOGLE_GENERATIVE_LANGUAGE_API_KEY=<YOUR_GOOGLE_GENERATIVE_LANGUAGE_API_KEY
 ### Develop
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 ### Build
 
 ```bash
-yarn build
+npm run build
 ```
 
 ### How to host a static website on Google App Engine.
