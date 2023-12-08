@@ -8,12 +8,12 @@ import {
 } from '@/store/messageApi';
 import { useParams, useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useRef } from 'react';
-// Import Swiper React components
+import remarkGfm from 'remark-gfm';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import Markdown from 'react-markdown';
 
-// import required modules
 import { Pagination } from 'swiper/modules';
-// Import Swiper styles
+
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -129,7 +129,14 @@ export default function Page() {
 						</form>
 					</div>
 				</SwiperSlide>
-				<SwiperSlide>"test"</SwiperSlide>
+				<SwiperSlide className='h-full w-full'>
+					{itineraries?.itineraries[0] && (
+						<div className='w-full h-full flex flex-col'>
+							<div>Itinerary</div>
+							<Markdown remarkPlugins={[[remarkGfm]]} className='prose'>{itineraries.itineraries[0].content}</Markdown>
+						</div>
+					)}
+				</SwiperSlide>
 			</Swiper>
 		</main>
 	);
