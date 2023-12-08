@@ -43,17 +43,86 @@ const md = new MarkdownIt();
 const llmCaller = new LLMCaller();
 const placeCaller = new PlaceCaller();
 
+
+const travelDestinations = [
+  'Paris, France',
+  'Kyoto, Japan',
+  'New York City, USA',
+  'Rome, Italy',
+  'Cape Town, South Africa',
+  'Sydney, Australia',
+  'Rio de Janeiro, Brazil',
+  'Barcelona, Spain',
+  'Bangkok, Thailand',
+  'Reykjavik, Iceland',
+  'Marrakech, Morocco',
+  'Amsterdam, Netherlands',
+  'Dubai, UAE',
+  'Santorini, Greece',
+  'Machu Picchu, Peru',
+  'Vancouver, Canada',
+  'Cairo, Egypt',
+  'Seoul, South Korea',
+  'Buenos Aires, Argentina',
+  'Prague, Czech Republic',
+  'Istanbul, Turkey',
+  'Queenstown, New Zealand',
+  'Beijing, China',
+  'Budapest, Hungary',
+  'Serengeti National Park, Tanzania',
+  'St. Petersburg, Russia',
+  'Dubai, UAE',
+  'Banff National Park, Canada',
+  'Dublin, Ireland',
+  'Siem Reap, Cambodia',
+  'Edinburgh, Scotland',
+  'Petra, Jordan',
+  'Kuala Lumpur, Malaysia',
+  'Yosemite National Park, USA',
+  'Mexico City, Mexico',
+  'Zurich, Switzerland',
+  'Hanoi, Vietnam',
+  'Machu Picchu, Peru',
+  'Queenstown, New Zealand',
+  'Cairo, Egypt',
+  'Marrakech, Morocco',
+  'Dubai, UAE',
+  'Santorini, Greece',
+  'Kyoto, Japan',
+  'Sydney, Australia',
+  'Amsterdam, Netherlands',
+  'Prague, Czech Republic',
+  'Istanbul, Turkey',
+  'Vancouver, Canada',
+  'Barcelona, Spain',
+  'Budapest, Hungary',
+  'Tokyo, Japan',
+  'Reykjavik, Iceland',
+  'Cape Town, South Africa',
+  'New York City, USA',
+  'Rio de Janeiro, Brazil',
+  'Bangkok, Thailand',
+  'Rome, Italy',
+  'Paris, France',
+  'Seoul, South Korea'
+];
+
+
+const randomDestination = () => {
+  return travelDestinations[Math.floor((Math.random() * travelDestinations.length * 10) % travelDestinations.length)];
+}
+
 const predefinedPrompt = [
   {
-    content: 'Can you plan me for a trip in Jeju, 5 days, 2 people ?',
+    content: `I want to travel to ${randomDestination()} for 7 days, 2 people, budget travel.`,
     type: 'prompt',
   },
   {
-    content: `Plan me for a food trip, 7 days, 3 people. Include famous food places.`,
+    content: `Plan me a trip to ${randomDestination()}, 5 days luxurious trip.`,
     type: 'prompt',
   },
   {
-    content: 'Plan me a trip 3 days anywhere in the world.',
+    content: `I want to visit ${randomDestination()} this upcoming spring.`,
     type: 'prompt',
   },
 ];
