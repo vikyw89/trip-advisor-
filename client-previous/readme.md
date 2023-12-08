@@ -1,8 +1,8 @@
-# DaejeonGPT - Travel Planner
+# TripBuddy - Travel Planner
 
 ![travel-planner-header](./docs/wanderlust_header.png)
 
-Travel Planner is a chatbot-based web application that can create itinerary based on the user's message. It is powered by PaLM, a large language model from Google. To use DaejeonGPT, simply type in a message that describes your interests or preferences, and it will generate an itinerary for you. You can also provide additional information to refine the itinerary.
+Travel Planner is a chatbot-based web application that can create itinerary based on the user's message. It is powered by PaLM, a large language model from Google. To use TripBuddy, simply type in a message that describes your interests or preferences, and it will generate an itinerary for you. You can also provide additional information to refine the itinerary.
 
 Travel Planner will consider your interests and preferences to create a personalized itinerary for you. It's a great tool for planning your next trip!
 
@@ -22,7 +22,7 @@ Potential Use Cases are clear for the Travel and Tourism industry but the same m
 
 ## Table of contents
 
-- [DaejeonGPT - DaejeonGPT](#DaejeonGPT---travel-planner)
+- [TripBuddy - TripBuddy](#TripBuddy---travel-planner)
   - [Table of contents](#table-of-contents)
   - [How to install](#how-to-install)
     - [Install node modules](#install-node-modules)
