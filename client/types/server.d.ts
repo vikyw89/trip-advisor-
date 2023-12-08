@@ -9,6 +9,10 @@ export interface paths {
     /** Read Itinerary */
     get: operations["read_itinerary_itineraries__itinerary_id__get"];
   };
+  "/locations/{location_name}": {
+    /** Read Location */
+    get: operations["read_location_locations__location_name__get"];
+  };
   "/users/{user_id}": {
     /**
      * Read User
@@ -89,6 +93,10 @@ export interface paths {
      */
     get: operations["read_trip_itineraries_trips__trip_id__itineraries_get"];
   };
+  "/photos/retrieve_url": {
+    /** Read Photo */
+    post: operations["read_photo_photos_retrieve_url_post"];
+  };
   "/": {
     /** Read Root */
     get: operations["read_root__get"];
@@ -99,6 +107,26 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    /** AddressComponent */
+    AddressComponent: {
+      /** Longtext */
+      longText: string;
+      /** Shorttext */
+      shortText: string;
+      /** Types */
+      types: string[];
+      /** Languagecode */
+      languageCode: string;
+    };
+    /** AuthorAttribution */
+    AuthorAttribution: {
+      /** Displayname */
+      displayName: string;
+      /** Uri */
+      uri: string;
+      /** Photouri */
+      photoUri: string;
+    };
     /** CreateUserMessageInput */
     CreateUserMessageInput: {
       /** Text */
@@ -127,29 +155,22 @@ export interface components {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
     };
-    /**
-     * Place
-     * @description Represents a Place record
-     */
-    Place: {
-      /** Id */
-      id: string;
-      /**
-       * Createdat
-       * Format: date-time
-       */
-      createdAt: string;
-      /**
-       * Updatedat
-       * Format: date-time
-       */
-      updatedAt: string;
-      reviews?: components["schemas"]["Review"];
-      Trip?: components["schemas"]["Trip"];
-      /** Tripid */
-      tripId?: string;
-      /** Reviewid */
-      reviewId: string;
+    /** Location */
+    Location: {
+      /** Latitude */
+      latitude: number;
+      /** Longitude */
+      longitude: number;
+    };
+    /** ReadLocationResponse */
+    ReadLocationResponse: {
+      /** Places */
+      places: components["schemas"]["routers__locations__Place"][];
+    };
+    /** ReadPhotoInput */
+    ReadPhotoInput: {
+      /** Photo Name */
+      photo_name: string;
     };
     /** ReadTripItinerariesResponse */
     ReadTripItinerariesResponse: {
@@ -198,7 +219,7 @@ export interface components {
       /** Content */
       content?: string;
       /** Place */
-      Place?: components["schemas"]["Place"][];
+      Place?: components["schemas"]["prisma__models__Place"][];
       /** Userid */
       userId: string;
     };
@@ -237,7 +258,7 @@ export interface components {
       /** Budget */
       budget?: string;
       /** Places */
-      places?: components["schemas"]["Place"][];
+      places?: components["schemas"]["prisma__models__Place"][];
       createdBy?: components["schemas"]["User"];
       /** Userid */
       userId?: string;
@@ -278,6 +299,11 @@ export interface components {
       msg: string;
       /** Error Type */
       type: string;
+    };
+    /** Viewport */
+    Viewport: {
+      low: components["schemas"]["Location"];
+      high: components["schemas"]["Location"];
     };
     /**
      * Itinerary
@@ -326,12 +352,100 @@ export interface components {
       /** Tripid */
       tripId?: string;
     };
+    /**
+     * Photo
+     * @description Represents a Photo record
+     */
+    prisma__models__Photo: {
+      /** Id */
+      id: string;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      /** Imageurl */
+      imageUrl: string;
+      /** Placeholderurl */
+      placeholderUrl?: string;
+    };
+    /**
+     * Place
+     * @description Represents a Place record
+     */
+    prisma__models__Place: {
+      /** Id */
+      id: string;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+      reviews?: components["schemas"]["Review"];
+      Trip?: components["schemas"]["Trip"];
+      /** Tripid */
+      tripId?: string;
+      /** Reviewid */
+      reviewId: string;
+    };
     /** Itinerary */
     routers__itineraries__Itinerary: {
       /** Itinerary Id */
       itinerary_id: string;
       /** Content */
       content: string;
+    };
+    /** Photo */
+    routers__locations__Photo: {
+      /** Name */
+      name: string;
+      /** Widthpx */
+      widthPx: number;
+      /** Heightpx */
+      heightPx: number;
+      /** Authorattributions */
+      authorAttributions: components["schemas"]["AuthorAttribution"][];
+    };
+    /** Place */
+    routers__locations__Place: {
+      /** Name */
+      name: string;
+      /** Id */
+      id: string;
+      /** Types */
+      types: string[];
+      /** Formattedaddress */
+      formattedAddress: string;
+      /** Addresscomponents */
+      addressComponents: components["schemas"]["AddressComponent"][];
+      location: components["schemas"]["Location"];
+      viewport: components["schemas"]["Viewport"];
+      /** Googlemapsuri */
+      googleMapsUri: string;
+      /** Utcoffsetminutes */
+      utcOffsetMinutes: number;
+      /** Adrformataddress */
+      adrFormatAddress: string;
+      /** Iconmaskbaseuri */
+      iconMaskBaseUri: string;
+      /** Iconbackgroundcolor */
+      iconBackgroundColor: string;
+      /** Displayname */
+      displayName: Record<string, never>;
+      /** Shortformattedaddress */
+      shortFormattedAddress: string;
+      /** Photos */
+      photos: components["schemas"]["routers__locations__Photo"][];
     };
     /** Itinerary */
     typings__index__Itinerary: {
@@ -375,6 +489,28 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["routers__itineraries__Itinerary"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Read Location */
+  read_location_locations__location_name__get: {
+    parameters: {
+      path: {
+        location_name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ReadLocationResponse"];
         };
       };
       /** @description Validation Error */
@@ -602,6 +738,28 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["ReadTripItinerariesResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Read Photo */
+  read_photo_photos_retrieve_url_post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReadPhotoInput"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["prisma__models__Photo"];
         };
       };
       /** @description Validation Error */

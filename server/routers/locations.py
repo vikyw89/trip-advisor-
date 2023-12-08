@@ -68,4 +68,3 @@ def read_location(location_name: str) ->ReadLocationResponse:
     saved_cache = r.set(key=f"get/locations/{location_name}", value=json.dumps(response))
 
     return ReadLocationResponse.validate(value=response)
-
