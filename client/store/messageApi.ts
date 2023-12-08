@@ -1,11 +1,11 @@
 import { supabase } from '@/libs/supabase';
 import { emptySplitApi } from './emptySplitApi';
-import { SERVER_BASE_URL, serverApi } from '@/libs/server';
+import { serverApi } from '@/libs/server';
 import { jsonStreamIterator } from '@/libs/streamAsyncIterator';
 import { z } from 'zod';
-import { v4 } from 'uuid';
 
-let isStreamingMessage = false;
+
+let streamingMap : Record<string, boolean> = {}
 
 const messageApi = emptySplitApi.injectEndpoints({
 	// @ts-ignore
@@ -159,10 +159,12 @@ const messageApi = emptySplitApi.injectEndpoints({
 				{ cacheDataLoaded, cacheEntryRemoved, updateCachedData }
 			) => {
 				try {
-					if (isStreamingMessage) return;
+					if (args.tripId in streamingMap) {
+						return;
+					}
 
 					await cacheDataLoaded;
-					isStreamingMessage = true;
+					streamingMap[args.tripId] = true;
 					const session = await supabase.auth.getSession();
 
 					if (!session.data.session?.user?.id) {
@@ -187,10 +189,7 @@ const messageApi = emptySplitApi.injectEndpoints({
 					if (!stream) {
 						throw new Error('Stream not found');
 					}
-					console.log(
-						'🚀 ~ file: messageApi.ts:113 ~ isStreamingMessage:',
-						isStreamingMessage
-					);
+					console.log("streaming",args.tripId)
 
 					const MessageEventSchema = z.object({
 						event: z
@@ -207,10 +206,6 @@ const messageApi = emptySplitApi.injectEndpoints({
 
 					for await (const message of jsonStreamIterator(stream)) {
 						const parsedMessage: MessageEvent = JSON.parse(message);
-						console.log(
-							'🚀 ~ file: messageApi.ts:154 ~ forawait ~ parsedMessage:',
-							parsedMessage
-						);
 
 						const event = parsedMessage.event;
 						const messageContent = parsedMessage.message;
@@ -254,7 +249,7 @@ const messageApi = emptySplitApi.injectEndpoints({
 					}
 				} finally {
 					await cacheEntryRemoved;
-					isStreamingMessage = false;
+					delete streamingMap[args.tripId];
 				}
 			},
 		}),
