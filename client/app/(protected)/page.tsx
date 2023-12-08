@@ -116,7 +116,7 @@ export default function Page() {
 							destination: 'plan a new trip !',
 							startDate: '',
 							endDate: '',
-							pictureUrl: 'new',
+							pictureUrl: '/images/new_trip.jpg',
 							isNewTrip: true,
 						}}
 						key={'new'}

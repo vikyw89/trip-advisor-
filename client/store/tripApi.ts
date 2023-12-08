@@ -65,7 +65,7 @@ const tripApi = emptySplitApi.injectEndpoints({
 					}
 
 					return {
-						data: res.data.trips,
+						data: res.data.trips.reverse(),
 					};
 				} catch (error) {
 					return { error };
