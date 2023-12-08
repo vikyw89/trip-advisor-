@@ -20,6 +20,7 @@ langchain = "^0.0.346"
 redis = "^5.0.1"
 supabase = "^2.2.0"
 python-magic = "^0.4.27"
+langchaincoexpert = "^1.0.3"
 
 
 [build-system]

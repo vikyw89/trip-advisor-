@@ -8,8 +8,10 @@ from pydantic import BaseModel
 from libs.redis.index import PubSub
 from typings.index import Itinerary, Message, MessageEvent
 from libs.prisma.index import db
+from libs.vertexAI.TrueLens import GenerateChat
 
 router = APIRouter(prefix="/users")
+generate_chat = GenerateChat()  # Instantiate GenerateChat class
 
 
 class ReadUserResponse(BaseModel):
@@ -228,18 +230,20 @@ def create_user_message(
 
     # TODO: implement AI streaming response
     # create an empty message
+
     pubsub.publish(
         MessageEvent(
             event="create", message=Message(id="streaming", text="", is_user=False)
         )
     )
+    chat_response = generate_chat.generate(input_text=input.text,trip_id=trip_id)
 
     def streaming():
-        message_to_stream = "this is a test response"
+        message_to_stream = chat_response
         for character in message_to_stream:
             yield character
 
-    complete_message = ""
+    complete_message = chat_response
     for stream in streaming():
         complete_message += stream
         # dummy response for the moment
@@ -253,7 +257,7 @@ def create_user_message(
     # after streaming finishes, we store the ai complete message in db
     save_ai_response = db.message.create(
         data={
-            "content": "put streaming response here",
+            "content": complete_message,
             "tripId": trip_id,
             "isBot": True,
         },
@@ -365,3 +369,11 @@ def subscribe_user_messages(user_id: str, trip_id: str) -> Iterable[str]:
 #     # TODO: implement save user location
 
 #     return SaveUserLocationResponse(status=200, success=True)
+def test_chat_generation(
+  input: CreateUserMessageInput, trip_id:Optional[str] = None
+) -> dict:
+    # TODO: implement AI streaming response
+    # create an empty message
+    chat_response = generate_chat.generate(input_text=input.text,trip_id=trip_id)
+
+    return {"chat_response": chat_response}
