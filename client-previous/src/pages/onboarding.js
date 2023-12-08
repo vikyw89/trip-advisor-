@@ -31,31 +31,37 @@ const OnBoarding = () => {
     >
       <Stack
         sx={{
-          background: 'url(onboarding.jpg)',
+          background: 'url(onboarding.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           width: '100%',
-          height: '100%'
+          height: '100%',
+          opacity: 0.8
         }}
       >
         <Stack position="absolute" bottom="40%" alignItems="center" sx={{ zIndex: 1000 }} justifyContent="center" width="100%" direction="row" spacing={1}>
           <Link href="/itinerary" sx={{ textDecoration: 'none' }}>
             <Fab
-
               sx={{
                 fontFamily: "Google Sans",
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                color: '#9E4F36',
+                backgroundColor: 'black',
+                color: 'white',
+                opacity: 0.8,
                 boxShadow: '0px 2px 3px rgba(255, 255, 255, 0.25)',
-                textTransform: 'none'
+                textTransform: 'none',
+                textAlign: 'center',
+                ":hover": {
+                  color:"black",
+                  backgroundColor: 'white',
+                }
               }}
               variant="extended"
             >
               Create Itinerary
             </Fab>
           </Link>
-          <Link href="/companion" sx={{ textDecoration: 'none' }}>
+          {/* <Link href="/companion" sx={{ textDecoration: 'none' }}>
             <Fab
 
               sx={{
@@ -69,7 +75,7 @@ const OnBoarding = () => {
             >
               Travel Companion
             </Fab>
-          </Link>
+          </Link> */}
         </Stack>
       </Stack>
     </Paper>
@@ -109,11 +115,21 @@ export default function () {
             sx={{
               transform: 'translate(-50%, 0)',
               top: '30%',
-              left: '50%'
+              left: '50%',
             }}
           >
-            <Typography fontFamily="Google Sans" fontWeight="bold" variant="h3">DaejeonGPT</Typography>
-            <Typography fontFamily="Google Sans" variant="h7">Get your travel itinerary as simple as talking to a friend</Typography>
+            <Typography fontFamily="Google Sans" fontWeight="bold" variant="h3" sx={{
+              color:"black",
+              mixBlendMode:"difference",
+              textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+              translate:"0 -340%"
+            }}>TripBuddy</Typography>
+            <Typography fontFamily="Google Sans" variant="h7" sx={{
+              color:"black",
+              mixBlendMode:"difference",
+              textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+              translate:"0 300%"
+            }}>Your Personal AI Travel Companion. Experience the future of travel planning with our intelligent, customized itinerary suggestions.</Typography>
           </Stack>
 
           <Box

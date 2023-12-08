@@ -45,15 +45,15 @@ const placeCaller = new PlaceCaller();
 
 const predefinedPrompt = [
   {
-    content: 'Can you plan me a trip in Daejeon ?',
+    content: 'Can you plan me for a trip in Jeju, 5 days, 2 people ?',
     type: 'prompt',
   },
   {
-    content: `I'm planning to go Jeju island, can you give me an easy going itinerary?`,
+    content: `Plan me for a food trip, 7 days, 3 people. Include famous food places.`,
     type: 'prompt',
   },
   {
-    content: 'What’s the best activities to do for solo traveler in Seoul ?',
+    content: 'Plan me a trip 3 days anywhere in the world.',
     type: 'prompt',
   },
 ];
@@ -421,7 +421,7 @@ export default function Index() {
               <Stack maxWidth="87%" alignItems="flex-start">
                 <Dialogue type="bot">
                   <Typography fontFamily="Google Sans" fontSize="16px" fontWeight="300" lineHeight="24px">
-                    It’s a big world, tell me where do you want to explore?
+                    It’s a <span style={{ fontWeight: 'bold', fontSize: '50px', color:'blue', transitionDuration: '0.5s', scale: '1.5' }}>big</span> world, tell me where do you want to explore?
                   </Typography>
                 </Dialogue>
               </Stack>
