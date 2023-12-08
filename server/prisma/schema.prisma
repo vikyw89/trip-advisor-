@@ -77,3 +77,12 @@ model Review {
   Place     Place[]
   userId    String
 }
+
+model Photo {
+  // this id is photoUri from googlemap
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+  imageUrl       String
+  placeholderUrl String?
+}

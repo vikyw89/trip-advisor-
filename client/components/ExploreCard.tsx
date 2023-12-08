@@ -3,8 +3,7 @@
 import { useInView } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
-import toast from 'react-hot-toast';
+import { useRef } from 'react';
 import { z } from 'zod';
 export const ExploreCardPropsSchema = z.object({
 	id: z.string(),
@@ -20,10 +19,8 @@ export const ExploreCard = ({ props }: { props: ExploreCardProps }) => {
 	const router = useRouter();
 
 	const exploreCardClickHandler = () => {
-        toast.error("Coming soon!")
-        // throw new Error("Coming soon!")
-        router.push(`/explore/${props.id}`);
-    };
+		router.push(`/places/${props.name}`);
+	};
 
 	return (
 		<div
@@ -35,7 +32,7 @@ export const ExploreCard = ({ props }: { props: ExploreCardProps }) => {
 				src={props.imageUrl}
 				alt={props.imageUrl}
 				fill
-				sizes="100%"
+				sizes='100%'
 				className={`hover:scale-150 duration-300 ${
 					isInView ? 'grayscale-0 scale-150' : 'grayscale'
 				} hover:grayscale-0 hover:shadow-inner`}

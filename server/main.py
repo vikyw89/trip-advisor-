@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from routers import itineraries, locations, messages,users,trips
+from routers import itineraries, locations, messages,users,trips,photos
 from fastapi.middleware.cors import CORSMiddleware
 
 # init
@@ -30,6 +30,8 @@ app.include_router(router=locations.router)
 app.include_router(router=messages.router)
 app.include_router(router=users.router)
 app.include_router(router=trips.router)
+app.include_router(router=photos.router)
+
 
 @app.get("/")
 def read_root():

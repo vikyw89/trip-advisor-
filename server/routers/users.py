@@ -233,17 +233,16 @@ def create_user_message(
 
     pubsub.publish(
         MessageEvent(
-            event="create", message=Message(id="streaming", text="", is_user=False)
+            event="create", message=Message(id="streaming", text=". . .", is_user=False)
         )
     )
-    chat_response = generate_chat.generate(input_text=input.text,trip_id=trip_id)
 
     def streaming():
-        message_to_stream = chat_response
+        message_to_stream = generate_chat.generate(input_text=input.text,trip_id=trip_id)
         for character in message_to_stream:
             yield character
 
-    complete_message = chat_response
+    complete_message = ""
     for stream in streaming():
         complete_message += stream
         # dummy response for the moment

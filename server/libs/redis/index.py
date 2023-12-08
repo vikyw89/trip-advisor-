@@ -1,11 +1,14 @@
+import json
 import os
 from typing import Generator
+from pydantic import Json
 from redis import  Redis
 from dotenv import load_dotenv
 from typings.index import MessageEvent
 
 load_dotenv()
-r = Redis.from_url(os.getenv('REDIS_URL'))
+
+r:Redis = Redis.from_url(os.getenv('REDIS_URL'))
 
 class PubSub:
     def __init__(self, user_id:str, trip_id: str) -> None:
@@ -23,3 +26,15 @@ class PubSub:
             if event["type"] == "message":
                 print("subscribe-event",event)
                 yield event["data"]
+
+class Cache:
+    def __init__(self) -> None:
+        pass
+    
+    def set(self, key: str, value: str) -> str:
+        r.set(key, value)
+        return value
+        
+    def get(self, key: str) -> str:
+        res = r.get(key)
+        return res
