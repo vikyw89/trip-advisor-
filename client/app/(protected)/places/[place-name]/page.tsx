@@ -2,7 +2,6 @@
 
 import { useReadLocationFromTextQuery } from '@/store/placeApi';
 import { useParams } from 'next/navigation';
-import Image from 'next/image';
 // Import Swiper React components
 import { Swiper, SwiperSlide} from 'swiper/react';
 // import required modules
