@@ -234,3 +234,4 @@ The output of the LLM is in this structure:
 - The `candidates` is an array of responses from the LLM. This project has three possible responses per turn (as candidate_count=3).
 - The `messages` is an array of chat messages from past to present alternating between the user (author=0) and the LLM (author=1). The first message is always from the user.
 # TripBuddy
+# TripBuddy
