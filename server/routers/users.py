@@ -2,17 +2,18 @@ import datetime
 import json
 from typing import Generator, Iterable, List, Literal, Optional
 import uuid
-from fastapi import APIRouter
+from fastapi import APIRouter , HTTPException , Request , Form
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from libs.redis.index import PubSub
 from typings.index import Itinerary, Message, MessageEvent
 from libs.prisma.index import db
 from libs.vertexAI.TrueLens import GenerateChat
+from libs.vertexAI.Suggestions import GenerateSuggestions
 
 router = APIRouter(prefix="/users")
 generate_chat = GenerateChat()  # Instantiate GenerateChat class
-
+suggestions = GenerateSuggestions()
 
 class ReadUserResponse(BaseModel):
     user_id: str
@@ -157,7 +158,6 @@ def create_user_trip(user_id: str) -> CreateUserTripResponse:
 
 class CreateUserMessageInput(BaseModel):
     text: Optional[str] = None
-    file_url: Optional[str] = None
 
 
 class CreateUserMessageResponse(BaseModel):
@@ -368,11 +368,78 @@ def subscribe_user_messages(user_id: str, trip_id: str) -> Iterable[str]:
 #     # TODO: implement save user location
 
 #     return SaveUserLocationResponse(status=200, success=True)
+@router.post("/test_chat")
 def test_chat_generation(
   input: CreateUserMessageInput, trip_id:Optional[str] = None
 ) -> dict:
     # TODO: implement AI streaming response
     # create an empty message
-    chat_response = generate_chat.generate(input_text=input.text,trip_id=trip_id)
+    chat_response = generate_chat.generate(input_text=input.text)
 
     return {"chat_response": chat_response}
+
+@router.post(
+    path="/generate_suggestions",
+    description="""
+    Create a Booking suggestions.
+
+    Args:
+        input (CreateUserMessageInput): The input data for creating the user message.
+
+    Returns:
+        chat_response: The response containing the user's updated messages.
+    """,)
+def generate_suggestions(
+ input: str = Form(...) ) -> dict:
+    # TODO: implement AI streaming response
+    # create an empty message
+    prompt = "Search https://www.booking.com/ using google serper for popular hotels with their links that are close to my trip locations to book from directly  (make sure that the links work fine and are after 2023) , Display them numbered 1. 2. 3. in this format : [Hotel Name](https://www.booking.com/xxxl) here is my trip data : " + input
+    chat_response = suggestions.generate(input_text=prompt)
+
+    return {"chat_response": chat_response}
+
+
+class SpeechToTextRequest(BaseModel):
+    audio: bytes
+
+class TextToSpeechRequest(BaseModel):
+    text: str
+
+class TranslateRequest(BaseModel):
+    input: str
+    language: str  # Add a field for the target language
+
+
+
+@router.post("/speech-to-text")
+
+async def speech_to_text(request: Request):
+    try:
+        audio_content: bytes = await request.body()
+        # audio_content = request.audio
+        # print(audio_content)
+        response = generate_chat.SpeechToText(audioz=audio_content)
+        # Process the response as needed
+        return {"transcript": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# @router.post("/text-to-speech")
+# def text_to_speech(request: TextToSpeechRequest):
+#     try:
+#         # Assuming request.text contains the text to be converted to speech
+#         openai_response = openai.TextToSpeech(request.text)
+#         # Process the openai_response as needed
+#         return FileResponse("output.mp3")
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+# @router.post("/translate")
+# def translate(request: TranslateRequest):
+#     try:
+#         # Assuming request.input contains the text to be translated
+#         tru_response = tru_chain.Translate(request.input, request.language)
+#         # Process the tru_response as needed
+#         return {"translated_text": tru_response}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
