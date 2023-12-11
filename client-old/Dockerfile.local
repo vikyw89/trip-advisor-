@@ -1,0 +1,7 @@
+FROM node:20-bullseye-slim as BASE
+WORKDIR /app
+COPY . .
+RUN npm i
+CMD npm run dev
+
+# TODO: optimize build
