@@ -26,12 +26,12 @@ app.add_middleware(
 )
 
 # routers
-app.include_router(router=itineraries.router)
-app.include_router(router=locations.router)
-app.include_router(router=messages.router)
+# app.include_router(router=itineraries.router)
+# app.include_router(router=locations.router)
+# app.include_router(router=messages.router)
 app.include_router(router=users.router)
-app.include_router(router=trips.router)
-app.include_router(router=photos.router)
+# app.include_router(router=trips.router)
+# app.include_router(router=photos.router)
 
 
 @app.get("/")
