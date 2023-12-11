@@ -257,7 +257,7 @@ def create_user_message(
     # after streaming finishes, we store the ai complete message in db
     save_ai_response = db.message.create(
         data={
-            "content": "put streaming response here",
+            "content": complete_message,
             "tripId": trip_id,
             "isBot": True,
         },

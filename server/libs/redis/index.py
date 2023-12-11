@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 from typings.index import MessageEvent
 
 load_dotenv()
-r = Redis.from_url(os.getenv('REDIS_URL'))
+r = Redis(
+  host='redis-19614.c281.us-east-1-2.ec2.cloud.redislabs.com',
+  port=19614,
+  password='hH6ba9QIwJefpjjkpvE1nCLhTtUCGkVS')
 
 class PubSub:
     def __init__(self, user_id:str, trip_id: str) -> None:
