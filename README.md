@@ -1,6 +1,6 @@
 # TripBuddy - Travel Planner
 
-LIVE PREVIEW: https://trip-advisor-tlq4.vercel.app/
+LIVE PREVIEW: https://trip-buddy.vercel.app/
 
 ## To start dev
 
@@ -30,6 +30,26 @@ The more conversational interface also lends itself better to serendipity, and t
 
 Potential Use Cases are clear for the Travel and Tourism industry but the same mechanics are transferable to retail and commerce for product recommendation, or discovery for Fashion or Media and Entertainment, or even configuration and personalization for Automotive.
 
+## Features:
+
+- Itinerary creation
+
+  ![Alt text](image-1.png)
+  ![Alt text](image-7.png)
+
+- Google place integration
+
+  ![Alt text](image-2.png)
+  ![Alt text](image-3.png)
+
+- Immersive Google map integration
+
+  ![Alt text](image-4.png)
+  ![Alt text](image-5.png)
+
+- Speech or text to text translation
+
+  ![Alt text](image-6.png)
 
 ## Table of contents
 
@@ -40,14 +60,6 @@ Potential Use Cases are clear for the Travel and Tourism industry but the same m
     - [Edit environment variables](#edit-environment-variables)
     - [Develop](#develop)
     - [Build](#build)
-    - [How to host a static website on Google App Engine.](#how-to-host-a-static-website-on-google-app-engine)
-  - [Getting an API Key from Google Places API.](#getting-an-api-key-from-google-places-api)
-    - [1. Create a Google Cloud Platform (GCP) project](#1-create-a-google-cloud-platform-gcp-project)
-    - [2. Enable the Places API](#2-enable-the-places-api)
-    - [3. Create a new API key](#3-create-a-new-api-key)
-    - [4. Restrict your API key (optional)](#4-restrict-your-api-key-optional)
-    - [5. Save the API key securely](#5-save-the-api-key-securely)
-    - [6. Add the API key to the project](#6-add-the-api-key-to-the-project)
   - [How it works](#how-it-works)
     - [LLM's prompt design](#llms-prompt-design)
     - [Prompt generator #1](#prompt-generator-1)
@@ -81,47 +93,6 @@ npm run dev
 
 ```bash
 npm run build
-```
-
-### How to host a static website on Google App Engine.
-
-https://cloud.google.com/appengine/docs/legacy/standard/python/getting-started/hosting-a-static-website
-
-## Getting an API Key from Google Places API
-
-To use the Google Places API, you need to obtain an API key. Here are the steps to get an API key:
-
-### 1. Create a Google Cloud Platform (GCP) project
-
-- If you haven't already, create a GCP project by following the steps on the [Google Cloud Console](https://console.cloud.google.com/) website.
-
-### 2. Enable the Places API
-
-- In the [Google Cloud Console](https://console.cloud.google.com/), navigate to the `APIs & Services` section and click on `Dashboard`.
-- Click on the `+ ENABLE APIS AND SERVICES` button and search for "Places API".
-- Select the Places API from the list of results and click on the `ENABLE` button.
-
-### 3. Create a new API key
-
-- In the [Google Cloud Console](https://console.cloud.google.com/), navigate to the `APIs & Services` section and click on Credentials.
-- Click on the `+ CREATE CREDENTIALS` button and select `API key` from the dropdown menu.
-
-### 4. Restrict your API key (optional)
-
-- It's important to restrict your API key to prevent unauthorized use. To do this, click on the Restrict key button and select the "HTTP referrers" radio button.
-- Enter the domain(s) or IP address(es) of your website or application that will be using the API key. You can also set quotas and limits for your API key to control usage.
-
-### 5. Save the API key securely
-
-- Save the API key in a secure location on your computer. Do not share this key with anyone, as it provides access to your GCP project.
-
-### 6. Add the API key to the project
-
-- Add the API key to the project
-  To use the API key in the project, you can either set the `VITE_GOOGLE_MAPS_API_KEY` environment variable to the value of the API key or pass the API key as a parameter when making requests to the Places API.
-
-```bash
-    VITE_GOOGLE_MAPS_API_KEY=<YOUR_GOOGLE_MAPS_API_KEY>
 ```
 
 ## How it works
