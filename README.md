@@ -14,9 +14,9 @@ head to localhost:5173
 
 ![Alt text](client-previous/public/tripbuddy.png)
 
-Travel Planner is a chatbot-based web application that can create itinerary based on the user's message. It is powered by PaLM, a large language model from Google. To use TripBuddy, simply type in a message that describes your interests or preferences, and it will generate an itinerary for you. You can also provide additional information to refine the itinerary.
+TripBuddy is a chatbot-based web application that can create itinerary based on the user's message. It is powered by PaLM, a large language model from Google. To use TripBuddy, simply type in a message that describes your interests or preferences, and it will generate an itinerary for you. You can also provide additional information to refine the itinerary.
 
-Travel Planner will consider your interests and preferences to create a personalized itinerary for you. It's a great tool for planning your next trip!
+TripBuddy will consider your interests and preferences to create a personalized itinerary for you. It's a great tool for planning your next trip!
 
 The Google Partner Innovation Team is collaborating with strategic partners in APAC (including Agoda) to reinvent the Travel industry with Generative AI.
 
