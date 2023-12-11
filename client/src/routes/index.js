@@ -17,7 +17,7 @@
 import React from 'react';
 import { useRoutes, createMemoryRouter } from 'react-router-dom';
 import Index from 'src/pages';
-import Translate from 'src/pages/Translate';
+import Translate from 'src/pages/translate';
 
 import Onboarding from 'src/pages/onboarding';
 
