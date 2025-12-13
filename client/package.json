@@ -18,7 +18,7 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.39.0",
     "framer-motion": "^10.16.14",
-    "next": "14.0.3",
+    "next": "14.2.35",
     "openapi-fetch": "^0.8.2",
     "react": "^18",
     "react-dom": "^18",
