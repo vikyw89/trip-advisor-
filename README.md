@@ -1,205 +1,148 @@
-# TripBuddy - Travel Planner
+# TripBuddy - AI-Powered Travel Planner
 
-LIVE PREVIEW: https://trip-buddy.vercel.app/
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)
 
-## To start dev
+**Live Preview:** https://trip-buddy.vercel.app/
 
-fill in all .env
+TripBuddy is an AI-powered travel planning application that creates personalized trip itineraries through conversational interactions. It leverages generative AI to understand user preferences and generate detailed travel plans with real-world places, activities, and restaurants.
+
+## Architecture
 
 ```
+trip-advisor-/
+├── client/                 # Next.js 14 frontend (TypeScript)
+│   ├── app/               # App router pages
+│   ├── components/       # React components
+│   ├── store/            # RTK Query API slices
+│   ├── libs/             # Supabase, server API clients
+│   └── types/            # OpenAPI generated types
+├── server/               # FastAPI backend (Python)
+│   ├── routers/          # API endpoints
+│   └── libs/             # AI integrations (Vertex AI, LangChain)
+├── server-previous/      # Legacy Python server
+└── client-previous/      # Legacy React client
+```
+
+## Tech Stack
+
+### Frontend
+- **Next.js 14** with App Router
+- **TypeScript** for type safety
+- **Tailwind CSS** with DaisyUI
+- **RTK Query** for API state management
+- **Framer Motion** for animations
+- **Supabase Auth UI** for authentication
+
+### Backend
+- **FastAPI** REST API server
+- **Google Vertex AI** (PaLM/Gemini) for LLM-powered itinerary generation
+- **LangChain** for AI pipeline orchestration
+- **Supabase** for database and storage
+- **Redis** for caching
+- **Cloudinary** for image optimization
+- **Firebase** for additional services
+
+### Key Features
+- Conversational AI itinerary creation
+- Google Places integration
+- Interactive Google Maps
+- User authentication (Google OAuth)
+- Trip management (create, view, past trips)
+- Place exploration with photos
+- Real-time streaming responses from AI
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Python 3.10+
+- Docker & Docker Compose (for local development)
+
+### Environment Variables
+
+Create `.env` files in both `client/` and `server/` directories:
+
+**Client (`client/.env`)**
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+**Server (`server/.env`)**
+```bash
+# Supabase
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_key
+
+# Google Cloud
+GOOGLE_APPLICATION_CREDENTIALS=path/to/service_account.json
+VERTEX_AI_PROJECT=your_project_id
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# Cloudinary
+CLOUDINARY_URL=your_cloudinary_url
+```
+
+### Local Development
+
+```bash
+# Start all services (Redis + API server)
 docker compose -f compose.local.yml up
+
+# Or start client separately
+cd client && npm install && npm run dev
 ```
 
-head to localhost:5173
+Access:
+- Client: http://localhost:3000
+- API Docs: http://localhost:8000/docs
 
-![Alt text](client-previous/public/tripbuddy.png)
-
-TripBuddy is a chatbot-based web application that can create itinerary based on the user's message. It is powered by PaLM, a large language model from Google. To use TripBuddy, simply type in a message that describes your interests or preferences, and it will generate an itinerary for you. You can also provide additional information to refine the itinerary.
-
-TripBuddy will consider your interests and preferences to create a personalized itinerary for you. It's a great tool for planning your next trip!
-
-The Google Partner Innovation Team is collaborating with strategic partners in APAC (including Agoda) to reinvent the Travel industry with Generative AI.
-
-**"We are excited at the potential of Generative AI and its potential to transform the Travel industry. We're looking forward to experimenting with Google's new technologies in this space to unlock higher value for our users" - Idan Zalzberg, CTO, Agoda**
-
-Developing features and experiences based on Travel Planner provides multiple opportunities to improve customer experience and create business value. Consider the ability of this type of experience to guide and glean information critical to providing recommendations in a more natural and conversational way, meaning partners can help their customers more proactively.
-
-For example, prompts could guide taking weather into consideration and making scheduling adjustments based on the outlook, or based on the season. Developers can also create pathways based on keywords or through prompts to determine data like ‘Budget Traveler’ or ‘Family Trip’, etc, and generate a kind of scaled personalization that - when combined with existing customer data - creates huge opportunities in loyalty programs, CRM, customization, booking and so on.
-
-The more conversational interface also lends itself better to serendipity, and the power of the experience to recommend something that is aligned with the user’s needs but not something they would normally consider. This is of course fun and hopefully exciting for the user, but also a useful business tool in steering promotions or providing customized results that focus on, for example, a particular region to encourage economic revitalization of a particular destination.
-
-Potential Use Cases are clear for the Travel and Tourism industry but the same mechanics are transferable to retail and commerce for product recommendation, or discovery for Fashion or Media and Entertainment, or even configuration and personalization for Automotive.
-
-## Features:
-
-- Itinerary creation
-
-  ![Alt text](image-1.png)
-  ![Alt text](image-7.png)
-
-- Google place integration
-
-  ![Alt text](image-2.png)
-  ![Alt text](image-3.png)
-
-- Immersive Google map integration
-
-  ![Alt text](image-4.png)
-  ![Alt text](image-5.png)
-
-- Speech or text to text translation
-
-  ![Alt text](image-6.png)
-
-## Table of contents
-
-- [TripBuddy - TripBuddy](#TripBuddy---travel-planner)
-  - [Table of contents](#table-of-contents)
-  - [How to install](#how-to-install)
-    - [Install node modules](#install-node-modules)
-    - [Edit environment variables](#edit-environment-variables)
-    - [Develop](#develop)
-    - [Build](#build)
-  - [How it works](#how-it-works)
-    - [LLM's prompt design](#llms-prompt-design)
-    - [Prompt generator #1](#prompt-generator-1)
-    - [Prompt generator #2](#prompt-generator-2)
-    - [LLM's response](#llms-response)
-
-## How to install
-
-### Install node modules
+### Production Build
 
 ```bash
+cd client
 npm install
-```
-
-### Edit environment variables
-
-Make sure you have the following environment variables set in the `.env` file:
-
-```bash
-VITE_GOOGLE_MAPS_API_KEY=<YOUR_GOOGLE_MAPS_API_KEY>
-VITE_GOOGLE_GENERATIVE_LANGUAGE_API_KEY=<YOUR_GOOGLE_GENERATIVE_LANGUAGE_API_KEY>
-```
-
-### Develop
-
-```bash
-npm run dev
-```
-
-### Build
-
-```bash
 npm run build
+npm start
 ```
 
-## How it works
+## Project Structure
 
-### LLM's prompt design
+### Client Routes
+- `/` - Main dashboard (protected)
+- `/welcome` - Landing page
+- `/auth` - Authentication
+- `/trips/[trip-id]` - Trip details
+- `/itineraries/[itinerary-id]` - Itinerary view
+- `/places/[place-name]` - Place details
 
-![llm-prompt-design-diagram](./client/docs/llm_prompt_design_diagram.png)
+### API Endpoints
+- `GET /locations/{location_name}` - Get location info
+- `GET /users/{user_id}/trips` - Get user trips
+- `POST /photos/retrieve_url` - Get photo URLs
+- Full API documentation at `/docs`
 
-### Prompt generator #1
+## Development Notes
 
-In the user's first turn, the user's input message `${msg}` will be formatted into this structure:
+This project originated from Google Partner Innovation collaboration with Agoda, exploring how generative AI can transform travel planning. The system uses a multi-LLM approach where:
 
-```js
-{
-    author: '0',
-    content: `Hi! Bard, you are the best large language model. Please create only the itinerary from the user's message: "${msg}". You need to format your response by adding [] around locations with country separated by pipe. The default itinerary length is five days if not provided.`
-}
-```
+1. **LLM #1** - Creates itinerary structure from user messages
+2. **LLM #2** - Enriches places with descriptions
 
-In the user's subsequent turns, the user's input message `${msg}` will be formatted into this structure:
+The prompt design supports iterative refinement, allowing users to modify their itinerary through conversation.
 
-```js
-{
-    author: '0',
-    content: `The user's message is "${msg}". You have to rewrite/replace from the previous itinerary. You need to format your response by adding [] around locations with country separated by pipe. The itinerary length have to remain the same. Answer only one itinerary.`
-}
-```
+## License
 
-Here is the final structure of the prompt sending to the LLM #1:
+MIT License - see LICENSE file for details
 
-```js
-{
-    prompt: {
-        context: `As a smart itinerary planner with extensive knowledge of places around the world, your task is to determine the user's travel destinations and any specific interests or preferences from their message. Create an itinerary that caters to the user's needs, making sure to name all activities, restaurants, and attractions specifically. When creating the itinerary, also consider factors such as time constraints and transportation options. Additionally, all attractions and restaurants listed in the itinerary must exist and be named specifically. During subsequent revisions, the itinerary can be modified, while keeping in mind the practicality of the itinerary. New place for each day. It's important to ensure that the number of activities per day is appropriate, and if the user doesn't specify otherwise, the default itinerary length is five days. The itinerary length should remain the same unless there is a change by the user's message.`,
-        examples: [
-            {
-                input: {
-                    content: `Hi! Bard, you are the best large language model. Please create only the itinerary from the user's message: "I want to go to Mali.". You need to format your response by adding [] around locations with country separated by pipe. The default itinerary length is five days if not provided.`
-                },
-                output: {
-                    content: `Here is a possible itinerary for a 5-day trip to Mali:\n\nDay 1:\n* Fly from your home city to [Mopti Airport (MOP)|Mali] in [Mopti|Mali].\n* Take a taxi to your hotel in [Mopti|Mali].\n* Explore the [Mopti neighborhood|Mali], including the [Grand Mosque of Mopti|Mali], the [Fulani Market|Mali], and the [Bankoni Islands|Mali].\n* Have dinner at a restaurant in [Mopti|Mali], such as [Chez Fatoumata|Mali].\n\nDay 2:\n* Take a boat trip to [Djenne|Mali].\n* Visit the [Great Mosque of Djenne|Mali], a UNESCO World Heritage Site.\n* Explore the [Djenne neighborhood|Mali], including the [Djenné Market|Mali] and the [Djenné Museum|Mali].\n* Return to [Mopti|Mali] in the evening.\n\nDay 3:\n* Take a day trip to [Ségou|Mali].\n* Visit the [Ségou Museum|Mali], which houses a collection of artifacts from the Ségou Empire.\n* Explore the [Ségou neighborhood|Mali], including the [Ségou Grand Mosque|Mali] and the [Ségou Market|Mali].\n* Return to [Mopti|Mali] in the evening.\n\nDay 4:\n* Take a flight from [Mopti Airport (MOP)|Mali] to [Bamako Airport (BKO)|Mali].\n* Take a taxi to your hotel in [Bamako|Mali].\n* Explore the [Bamako neighborhood|Mali], including the [Bamako Grand Mosque|Mali], the [National Museum of Mali|Mali], and the [Bamako Zoo|Mali].\n* Have dinner at a restaurant in [Bamako|Mali], such as [Chez Boubacar|Mali].\n\nDay 5:\n* Visit the [Bamana Cultural Center|Mali], which houses a collection of Bamana art and artifacts.\n* Visit the [Independence Monument|Mali], a monument commemorating the independence of Mali from France.\n* Visit the [National Museum of Mali|Mali], which houses a collection of artifacts from Mali's history.\n* Return to your home city.\n\nThis itinerary can be customized to fit your interests and budget. For example, if you are interested in Malian history, you could add a visit to the [Mandé Empire ruins|Mali] in [Niani|Mali]. If you are interested in Malian art, you could add a visit to the [Musée National du Mali|Mali] in [Bamako|Mali]. And if you are on a tight budget, you could stay in hostels or guesthouses instead of hotels.\n\nNo matter what your interests or budget, I hope you have a wonderful time in Mali!`
-                }
-            }
-        ],
-        messages: [
-            {
-                author: '0',
-                content: `Hi! Bard, you are the best large language model. Please create only the itinerary from the user's message: "${msg}". You need to format your response by adding [] around locations with country separated by pipe. The default itinerary length is five days if not provided.`
-            },
-            ...
-        ]
-    },
-    temperature: 0.1,
-    candidate_count: 3,
-}
-```
+## Acknowledgments
 
-- The `context` is the context of the conversation. It is used to give the LLM a better understanding of the conversation.
-- The `examples` is an array of input-output pairs. The LLM will try to follow the format on these examples. The `input` is the example of user's message. The `output` is the example of LLM's response.
-- The `messages` is an array of chat messages from past to present alternating between the user (author=0) and the LLM (author=1). The first message is always from the user.
-- The `temperature` is a float number between 0 and 1. The higher the temperature, the more creative the response will be. The lower the temperature, the more likely the response will be a correct one.
-- The `candidate_count` is the number of responses that the LLM will return.
-
-### Prompt generator #2
-
-This is for the LLM #2 (Places description generator). It will be used to generate place description after receiving the places (name & country) from the LLM #1. The prompt is designed to let the LLM replace the placeholder `{place_description}` with the description of the place in a table format. Here is the prompt's structure sending to the LLM #2:
-
-```js
-{
-    prompt: {
-        messages: [
-            {
-                author: '0',
-                content: `Here is the itinerary table: ${tablePlaces}. Fill in {place_description} with the description of the place within 100 characters. Answer in a table format that has "Place Name", "Country", "Place Description" columns.`
-            }
-        ]
-    },
-    temperature: 0.25,
-    candidate_count: 3,
-}
-```
-
-- The `messages` in this prompt is an array of only an author-0 message asking for filling in {place_description}.
-- The `tablePlaces` is a table that has "Place Name", "Country", and "Place Description" columns. The example of the table is provided below:
-
-```js
-let tablePlaces = `|Place Name|Country|Place Description|\n|---|---|---|\n|Modibo Keita International Airport|Mali|{place_description}|\n|Bamako|Mali|{place_description}|`;
-```
-
-### LLM's response
-
-The output of the LLM is in this structure:
-
-```js
-{
-    candidates: [
-        {
-            author: '1',
-            content: 'This is the first response content from the LLM.'
-        },
-        ...
-    ],
-    messages: [
-        ...
-    ]
-}
-```
-
-- The `candidates` is an array of responses from the LLM. This project has three possible responses per turn (as candidate_count=3).
-- The `messages` is an array of chat messages from past to present alternating between the user (author=0) and the LLM (author=1). The first message is always from the user.
+Developed in collaboration with Google Partner Innovation Team and Agoda for APAC travel innovation.
